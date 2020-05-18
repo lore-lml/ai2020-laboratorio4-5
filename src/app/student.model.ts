@@ -8,4 +8,7 @@ export class Student {
     this.firstName = firstName;
     this.lastName = lastName;
   }
+  toString = (): string => {
+    return `${this.firstName} ${this.lastName} (${this.id})`;
+  }
 }

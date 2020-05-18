@@ -25,12 +25,22 @@
   <mat-sidenav-content>
     <div class="form-student-table">
       <mat-form-field appearance="outline">
-        <mat-label>Cerca e aggiungi uno studente</mat-label>
-        <input matInput>
+        <input matInput type="search" placeholder="Cerca e aggiungi uno studente"
+               [formControl]="studentTable.formControl"
+                [matAutocomplete]="auto">
+        <mat-autocomplete #auto="matAutocomplete">
+          <mat-option *ngFor="let student of studentTable.students" [value]="student.toString()">
+            {{student.toString()}}
+          </mat-option>
+        </mat-autocomplete>
       </mat-form-field>
-      <button mat-raised-button color="primary">Aggiungi</button>
+      <button mat-raised-button color="primary">
+        Aggiungi
+      </button>
       <div>
-        <button mat-raised-button color="accent">Elimina</button>
+        <button mat-raised-button color="accent" (click)="studentTable.deleteStudents()">
+          Elimina
+        </button>
       </div>
     </div>
 

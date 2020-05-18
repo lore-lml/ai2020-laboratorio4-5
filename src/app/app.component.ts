@@ -1,6 +1,7 @@
 import {Component, ViewChild} from '@angular/core';
 import {MatSidenav} from '@angular/material/sidenav';
 import {Student} from './student.model';
+import {FormControl} from '@angular/forms';
 
 @Component({
   selector: 'app-root',
@@ -15,7 +16,10 @@ export class AppComponent {
   studentTable: StudentTable = new StudentTable([
     new Student('s1', 'Lorenzo', 'Limoli'),
     new Student('s2', 'Stefano', 'Loscalzo'),
-    new Student('s3', 'Angelo', 'Floridia')
+    new Student('s3', 'Angelo', 'Floridia'),
+    new Student('s4', 'Giovanni', 'Muciaccia'),
+    new Student('s5', 'Alex', 'Astone'),
+    new Student('s6', 'Francesco', 'Rossi'),
   ]);
   toggleForMenuClick() {
     this.sidenav.toggle();
@@ -27,9 +31,11 @@ export class StudentTable{
   displayedColumns: string[] = ['Select', 'Id', 'FirstName', 'LastName'];
   checkboxes: Array<boolean>;
   headerState: number; // 1 = unchecked, 2 = indeterminate, 3 = checked
+  formControl: FormControl;
   constructor(students: Array<Student>) {
     this.students = students;
     this.headerState = 1;
+    this.formControl = new FormControl();
     this.checkboxes = new Array<boolean>(students.length);
     for (let i = 0; i < students.length; i++){
       this.checkboxes[i] = false;
@@ -64,5 +70,10 @@ export class StudentTable{
   }
   isCheckboxChecked(i: number): boolean {
     return this.checkboxes[i];
+  }
+  deleteStudents(){
+    this.students = this.students.filter((value, index) => !this.checkboxes[index]);
+    this.checkboxes = this.checkboxes.filter(v => !v);
+    this.headerState = 1;
   }
 }
