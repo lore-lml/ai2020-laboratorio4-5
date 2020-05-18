@@ -9,6 +9,8 @@ import {MatSidenavModule} from '@angular/material/sidenav';
 import {MatListModule} from '@angular/material/list';
 import {MatTableModule} from '@angular/material/table';
 import {MatCheckboxModule} from '@angular/material/checkbox';
+import {MatButtonModule} from '@angular/material/button';
+import {MatInputModule} from '@angular/material/input';
 
 @NgModule({
   declarations: [
@@ -23,7 +25,9 @@ import {MatCheckboxModule} from '@angular/material/checkbox';
     MatSidenavModule,
     MatListModule,
     MatTableModule,
-    MatCheckboxModule
+    MatCheckboxModule,
+    MatButtonModule,
+    MatInputModule
   ],
   providers: [],
   bootstrap: [AppComponent]
