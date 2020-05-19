@@ -1,6 +1,6 @@
 <mat-toolbar color="primary">
-  <button mat-icon-button>
-    <mat-icon (click)="toggleForMenuClick()">menu</mat-icon>
+  <button mat-icon-button (click)="toggleForMenuClick()">
+    <mat-icon>menu</mat-icon>
   </button>
   <h1>VirtualLabs</h1>
 </mat-toolbar>
@@ -25,16 +25,20 @@
   <mat-sidenav-content>
     <div class="form-student-table">
       <mat-form-field appearance="outline">
-        <input matInput type="search" placeholder="Cerca e aggiungi uno studente"
-               [formControl]="studentTable.formControl"
-                [matAutocomplete]="auto">
-        <mat-autocomplete #auto="matAutocomplete">
-          <mat-option *ngFor="let student of studentTable.students" [value]="student.toString()">
-            {{student.toString()}}
+        <input #textInput matInput type="search" placeholder="Cerca e aggiungi uno studente"
+              [formControl]="studentTable.formControl"
+              [matAutocomplete]="auto"
+              (keyup)="studentTable.filterStudents(textInput.value)">
+        <mat-autocomplete #auto="matAutocomplete"
+                          [displayWith]="studentTable.displayStudent"
+                          (optionSelected)="studentTable.setSelectedStudent($event)">
+          <mat-option *ngFor="let student of studentTable.filteredStudents" [value]="student">
+            {{student}}
           </mat-option>
         </mat-autocomplete>
       </mat-form-field>
-      <button mat-raised-button color="primary">
+      <button mat-raised-button color="primary"
+      (click)="studentTable.addStudent(textInput)">
         Aggiungi
       </button>
       <div>
@@ -48,7 +52,7 @@
 
       <mat-tab label="Studenti">
         <div class="container">
-          <table mat-table [dataSource]="studentTable.students" class="mat-elevation-z8">
+          <table mat-table [dataSource]="studentTable.addedStudents" class="mat-elevation-z8">
             <!-- Select Column-->
             <ng-container matColumnDef="Select">
               <th mat-header-cell *matHeaderCellDef>

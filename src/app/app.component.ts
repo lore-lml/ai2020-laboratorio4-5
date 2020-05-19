@@ -2,6 +2,7 @@ import {Component, ViewChild} from '@angular/core';
 import {MatSidenav} from '@angular/material/sidenav';
 import {Student} from './student.model';
 import {FormControl} from '@angular/forms';
+import {MatAutocompleteSelectedEvent} from '@angular/material/autocomplete';
 
 @Component({
   selector: 'app-root',
@@ -27,19 +28,32 @@ export class AppComponent {
 }
 
 export class StudentTable{
-  students: Array<Student>;
+  students: ReadonlyArray<Student>;
+  addedStudents: Array<Student>;
+  filteredStudents: Array<Student>;
   displayedColumns: string[] = ['Select', 'Id', 'FirstName', 'LastName'];
   checkboxes: Array<boolean>;
   headerState: number; // 1 = unchecked, 2 = indeterminate, 3 = checked
   formControl: FormControl;
+  selectedStudent: Student;
+
   constructor(students: Array<Student>) {
     this.students = students;
+    this.addedStudents = [students[0], students[1]];
+    this.filteredStudents = students.filter(value => !this.addedStudents.includes(value)).map(value => value);
     this.headerState = 1;
     this.formControl = new FormControl();
-    this.checkboxes = new Array<boolean>(students.length);
-    for (let i = 0; i < students.length; i++){
+    this.checkboxes = new Array<boolean>(this.addedStudents.length);
+    for (let i = 0; i < this.checkboxes.length; i++){
       this.checkboxes[i] = false;
     }
+    this.selectedStudent = null;
+  }
+  displayStudent(student: Student): string{
+    if (student !== null){
+      return student.toString();
+    }
+    return '';
   }
   onHeaderChange(event){
     if (event.checked){
@@ -72,8 +86,36 @@ export class StudentTable{
     return this.checkboxes[i];
   }
   deleteStudents(){
-    this.students = this.students.filter((value, index) => !this.checkboxes[index]);
+    this.addedStudents = this.addedStudents.filter((value, index) => !this.checkboxes[index]);
     this.checkboxes = this.checkboxes.filter(v => !v);
     this.headerState = 1;
+    this.filteredStudents = this.students.filter(v => !this.addedStudents.includes(v));
+  }
+
+  filterStudents(str: string) {
+    this.filteredStudents = this.students
+      .filter(value => !this.addedStudents.includes(value) &&
+      value.toString().toLowerCase().includes(str.toLowerCase())
+    );
+  }
+
+  setSelectedStudent(event: MatAutocompleteSelectedEvent) {
+    this.selectedStudent = event.option.value;
+  }
+
+  addStudent(textInput: HTMLInputElement) {
+    if (this.selectedStudent === null) {
+      return;
+    }
+    this.addedStudents.push(this.selectedStudent);
+    this.addedStudents = this.addedStudents.map(v => v);
+    this.filteredStudents = this.filteredStudents.filter(value => !this.addedStudents.includes(value));
+    this.checkboxes.push(false);
+    this.selectedStudent = null;
+    textInput.value = null;
+
+    if (this.isHeaderChecked()){
+      this.headerState = 2; // If is checked -> become indeterminate
+    }
   }
 }
