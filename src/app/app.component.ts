@@ -3,6 +3,9 @@ import {MatSidenav} from '@angular/material/sidenav';
 import {Student} from './student.model';
 import {FormControl} from '@angular/forms';
 import {MatAutocompleteSelectedEvent} from '@angular/material/autocomplete';
+import {MatPaginator} from '@angular/material/paginator';
+import {MatTableDataSource} from '@angular/material/table';
+import {MatSort} from '@angular/material/sort';
 
 @Component({
   selector: 'app-root',
@@ -22,6 +25,13 @@ export class AppComponent {
     new Student('s5', 'Alex', 'Astone'),
     new Student('s6', 'Francesco', 'Rossi'),
   ]);
+  @ViewChild(MatPaginator, {static: true}) paginator: MatPaginator;
+  @ViewChild(MatSort, {static: true}) sort: MatSort;
+  // tslint:disable-next-line:use-lifecycle-interface
+  ngOnInit() {
+    this.studentTable.addedStudents.paginator = this.paginator;
+    this.studentTable.addedStudents.sort = this.sort;
+  }
   toggleForMenuClick() {
     this.sidenav.toggle();
   }
@@ -29,9 +39,9 @@ export class AppComponent {
 
 export class StudentTable{
   students: ReadonlyArray<Student>;
-  addedStudents: Array<Student>;
+  addedStudents: MatTableDataSource<Student>;
   filteredStudents: Array<Student>;
-  displayedColumns: string[] = ['Select', 'Id', 'FirstName', 'LastName'];
+  displayedColumns: string[] = ['select', 'id', 'firstName', 'lastName'];
   checkboxes: Array<boolean>;
   headerState: number; // 1 = unchecked, 2 = indeterminate, 3 = checked
   formControl: FormControl;
@@ -39,11 +49,11 @@ export class StudentTable{
 
   constructor(students: Array<Student>) {
     this.students = students;
-    this.addedStudents = [students[0], students[1]];
-    this.filteredStudents = students.filter(value => !this.addedStudents.includes(value)).map(value => value);
+    this.addedStudents = new MatTableDataSource<Student>([students[0], students[1]]);
+    this.filteredStudents = students.filter(value => !this.addedStudents.data.includes(value)).map(value => value);
     this.headerState = 1;
     this.formControl = new FormControl();
-    this.checkboxes = new Array<boolean>(this.addedStudents.length);
+    this.checkboxes = new Array<boolean>(this.addedStudents.data.length);
     for (let i = 0; i < this.checkboxes.length; i++){
       this.checkboxes[i] = false;
     }
@@ -86,15 +96,15 @@ export class StudentTable{
     return this.checkboxes[i];
   }
   deleteStudents(){
-    this.addedStudents = this.addedStudents.filter((value, index) => !this.checkboxes[index]);
+    this.addedStudents.data = this.addedStudents.data.filter((value, index) => !this.checkboxes[index]);
     this.checkboxes = this.checkboxes.filter(v => !v);
     this.headerState = 1;
-    this.filteredStudents = this.students.filter(v => !this.addedStudents.includes(v));
+    this.filteredStudents = this.students.filter(v => !this.addedStudents.data.includes(v));
   }
 
   filterStudents(str: string) {
     this.filteredStudents = this.students
-      .filter(value => !this.addedStudents.includes(value) &&
+      .filter(value => !this.addedStudents.data.includes(value) &&
       value.toString().toLowerCase().includes(str.toLowerCase())
     );
   }
@@ -107,9 +117,9 @@ export class StudentTable{
     if (this.selectedStudent === null) {
       return;
     }
-    this.addedStudents.push(this.selectedStudent);
-    this.addedStudents = this.addedStudents.map(v => v);
-    this.filteredStudents = this.filteredStudents.filter(value => !this.addedStudents.includes(value));
+    this.addedStudents.data.push(this.selectedStudent);
+    this.addedStudents.data = this.addedStudents.data.map(v => v);
+    this.filteredStudents = this.filteredStudents.filter(value => !this.addedStudents.data.includes(value));
     this.checkboxes.push(false);
     this.selectedStudent = null;
     textInput.value = null;

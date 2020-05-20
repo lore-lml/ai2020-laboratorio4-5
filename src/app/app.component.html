@@ -1,28 +1,23 @@
 <mat-toolbar color="primary">
-  <button mat-icon-button (click)="toggleForMenuClick()">
+  <button mat-icon-button (click)="toggleForMenuClick()" color="accent">
     <mat-icon>menu</mat-icon>
   </button>
   <h1>VirtualLabs</h1>
 </mat-toolbar>
-
-<mat-toolbar>Applicazioni Internet</mat-toolbar>
 
 <mat-sidenav-container>
   <!-- ************************* SIDENAV ********************-->
   <mat-sidenav #sidenav opened mode="side" position="start">
     <div class="container">
       <mat-nav-list>
-        <mat-list-item>
-          <p>Applicazioni Internet</p>
-        </mat-list-item>
-        <mat-list-item>
-          <p>Programmazione di Sistema</p>
-        </mat-list-item>
+        <mat-list-item>Applicazioni Internet</mat-list-item>
+        <mat-list-item>Programmazione di Sistema</mat-list-item>
       </mat-nav-list>
     </div>
   </mat-sidenav>
   <!-- ************************* SIDENAV CONTENT********************-->
   <mat-sidenav-content>
+    <mat-toolbar color="">Applicazioni Internet</mat-toolbar>
     <div class="form-student-table">
       <mat-form-field appearance="outline">
         <input #textInput matInput type="search" placeholder="Cerca e aggiungi uno studente"
@@ -52,9 +47,9 @@
 
       <mat-tab label="Studenti">
         <div class="container">
-          <table mat-table [dataSource]="studentTable.addedStudents" class="mat-elevation-z8">
+          <table mat-table [dataSource]="studentTable.addedStudents" matSort class="mat-elevation-z8">
             <!-- Select Column-->
-            <ng-container matColumnDef="Select">
+            <ng-container matColumnDef="select">
               <th mat-header-cell *matHeaderCellDef>
                 <mat-checkbox [indeterminate]="studentTable.isIndeterminate()"
                               [checked]="studentTable.isHeaderChecked()"
@@ -68,24 +63,25 @@
               </td>
             </ng-container>
             <!-- Id Column-->
-            <ng-container matColumnDef="Id">
-              <th mat-header-cell *matHeaderCellDef> Id </th>
+            <ng-container matColumnDef="id">
+              <th mat-header-cell *matHeaderCellDef mat-sort-header> Id </th>
               <td mat-cell *matCellDef="let element"> {{element.id}} </td>
             </ng-container>
             <!-- FirstName Column-->
-            <ng-container matColumnDef="FirstName">
-              <th mat-header-cell *matHeaderCellDef> Nome </th>
+            <ng-container matColumnDef="firstName">
+              <th mat-header-cell *matHeaderCellDef mat-sort-header> Nome </th>
               <td mat-cell *matCellDef="let element"> {{element.firstName}} </td>
             </ng-container>
             <!-- LastName Column-->
-            <ng-container matColumnDef="LastName">
-              <th mat-header-cell *matHeaderCellDef> Cognome </th>
+            <ng-container matColumnDef="lastName">
+              <th mat-header-cell *matHeaderCellDef mat-sort-header> Cognome </th>
               <td mat-cell *matCellDef="let element"> {{element.lastName}} </td>
             </ng-container>
 
             <tr mat-header-row *matHeaderRowDef="studentTable.displayedColumns"></tr>
             <tr mat-row *matRowDef="let row; columns: studentTable.displayedColumns;"></tr>
           </table>
+          <mat-paginator [pageSizeOptions]="[5, 10, 30]" showFirstLastButtons></mat-paginator>
         </div>
       </mat-tab>
 
