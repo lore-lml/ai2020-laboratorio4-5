@@ -3,7 +3,7 @@ import {MatSidenav} from '@angular/material/sidenav';
 import {Student} from './student.model';
 import {FormControl} from '@angular/forms';
 import {MatAutocompleteSelectedEvent} from '@angular/material/autocomplete';
-import {MatPaginator} from '@angular/material/paginator';
+import {MatPaginator, PageEvent} from '@angular/material/paginator';
 import {MatTableDataSource} from '@angular/material/table';
 import {MatSort} from '@angular/material/sort';
 
@@ -24,6 +24,8 @@ export class AppComponent {
     new Student('s4', 'Giovanni', 'Muciaccia'),
     new Student('s5', 'Alex', 'Astone'),
     new Student('s6', 'Francesco', 'Rossi'),
+    new Student('s7', 'Giuseppe', 'Noni'),
+    new Student('s8', 'Paola', 'Bianchi')
   ]);
   @ViewChild(MatPaginator, {static: true}) paginator: MatPaginator;
   @ViewChild(MatSort, {static: true}) sort: MatSort;
@@ -42,7 +44,6 @@ export class StudentTable{
   addedStudents: MatTableDataSource<Student>;
   filteredStudents: Array<Student>;
   displayedColumns: string[] = ['select', 'id', 'firstName', 'lastName'];
-  checkboxes: Array<boolean>;
   headerState: number; // 1 = unchecked, 2 = indeterminate, 3 = checked
   formControl: FormControl;
   selectedStudent: Student;
@@ -53,10 +54,6 @@ export class StudentTable{
     this.filteredStudents = students.filter(value => !this.addedStudents.data.includes(value)).map(value => value);
     this.headerState = 1;
     this.formControl = new FormControl();
-    this.checkboxes = new Array<boolean>(this.addedStudents.data.length);
-    for (let i = 0; i < this.checkboxes.length; i++){
-      this.checkboxes[i] = false;
-    }
     this.selectedStudent = null;
   }
   displayStudent(student: Student): string{
@@ -68,11 +65,11 @@ export class StudentTable{
   onHeaderChange(event){
     if (event.checked){
       this.headerState = 3;
-      this.checkboxes.forEach((value, index) => this.checkboxes[index] = true);
+      this.addedStudents._pageData(this.addedStudents.data).forEach((v) => v.checked = true);
       return;
     }
     this.headerState = 1;
-    this.checkboxes.forEach((v, i) => this.checkboxes[i] = false);
+    this.addedStudents._pageData(this.addedStudents.data).forEach((v) => v.checked = false);
     return;
   }
   isIndeterminate(): boolean{
@@ -82,22 +79,16 @@ export class StudentTable{
     return this.headerState === 3;
   }
   onCheckboxChange(i: number, event) {
-    this.checkboxes[i] = event.checked;
-    const numberOfChecked = this.checkboxes.filter(value => value === true).length;
-    if (numberOfChecked === 0){
-      this.headerState = 1;
-    }else if (numberOfChecked === this.checkboxes.length){
-      this.headerState = 3;
-    }else{
-      this.headerState = 2;
-    }
+    this.addedStudents._pageData(this.addedStudents.data)[i].checked = event.checked;
+    this.setHeaderState();
   }
   isCheckboxChecked(i: number): boolean {
-    return this.checkboxes[i];
+    return this.addedStudents._pageData(this.addedStudents.data)[i].checked;
   }
   deleteStudents(){
-    this.addedStudents.data = this.addedStudents.data.filter((value, index) => !this.checkboxes[index]);
-    this.checkboxes = this.checkboxes.filter(v => !v);
+    const filtered: Student[] = this.addedStudents.data.filter(v => !v.checked);
+    this.addedStudents.data.forEach(v => v.checked = false);
+    this.addedStudents.data = filtered;
     this.headerState = 1;
     this.filteredStudents = this.students.filter(v => !this.addedStudents.data.includes(v));
   }
@@ -120,12 +111,27 @@ export class StudentTable{
     this.addedStudents.data.push(this.selectedStudent);
     this.addedStudents.data = this.addedStudents.data.map(v => v);
     this.filteredStudents = this.filteredStudents.filter(value => !this.addedStudents.data.includes(value));
-    this.checkboxes.push(false);
     this.selectedStudent = null;
     textInput.value = null;
 
     if (this.isHeaderChecked()){
       this.headerState = 2; // If is checked -> become indeterminate
     }
+  }
+
+  private setHeaderState(){
+    const pageData: Student[] = this.addedStudents._pageData(this.addedStudents.data);
+    const numberOfChecked = pageData.map(v => v.checked).filter(value => value === true).length;
+    if (numberOfChecked === 0){
+      this.headerState = 1;
+    }else if (numberOfChecked === pageData.length){
+      this.headerState = 3;
+    }else{
+      this.headerState = 2;
+    }
+  }
+
+  changePage() {
+    this.setHeaderState();
   }
 }
