@@ -1,27 +1,16 @@
-# Lab4
+# Applicazioni Internet Lab 4
+Author: Lorenzo Limoli
 
-This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 9.1.6.
+## Istruzioni
 
-## Development server
+- Run `npm install`
+- Run `npm start`
+- Aprire il browser all'indirizzo `localhost:4200`
 
-Run `ng serve` for a dev server. Navigate to `http://localhost:4200/`. The app will automatically reload if you change any of the source files.
+## Implementazioni Extra
 
-## Code scaffolding
+- Di ogni azione viene notificato il successo tramite `snackbar` con possibilità di effettuare rollback
+- Inserito un badge che tiene il conto degli utenti selezionati tramite checkbox anche su pagine diverse
+- Paginazione e ordinamento tramite gli `header` delle colonne `id`, `nome` e `cognome`
+- La checkbox master sull'header della `mat-table` agisce solamente sulle checkbox degli studenti presenti in quella pagina
 
-Run `ng generate component component-name` to generate a new component. You can also use `ng generate directive|pipe|service|class|guard|interface|enum|module`.
-
-## Build
-
-Run `ng build` to build the project. The build artifacts will be stored in the `dist/` directory. Use the `--prod` flag for a production build.
-
-## Running unit tests
-
-Run `ng test` to execute the unit tests via [Karma](https://karma-runner.github.io).
-
-## Running end-to-end tests
-
-Run `ng e2e` to execute the end-to-end tests via [Protractor](http://www.protractortest.org/).
-
-## Further help
-
-To get more help on the Angular CLI use `ng help` or go check out the [Angular CLI README](https://github.com/angular/angular-cli/blob/master/README.md).
