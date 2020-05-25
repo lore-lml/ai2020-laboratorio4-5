@@ -20,7 +20,8 @@
     <mat-toolbar color="">Applicazioni Internet</mat-toolbar>
     <div class="form-student-table">
       <mat-form-field appearance="outline">
-        <input #textInput matInput type="search" placeholder="Cerca e aggiungi uno studente"
+        <mat-label>Aggiungi uno Studente</mat-label>
+        <input #textInput matInput type="search" placeholder="Cerca lo studente che vuoi aggiungere"
               [formControl]="studentTable.formControl"
               [matAutocomplete]="auto"
               (keyup)="studentTable.filterStudents(textInput.value)">
