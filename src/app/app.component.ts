@@ -49,7 +49,7 @@ export class StudentTable{
   students: ReadonlyArray<Student>;
   addedStudents: MatTableDataSource<Student>;
   filteredStudents: Array<Student>;
-  displayedColumns: string[] = ['select', 'id', 'firstName', 'lastName'];
+  displayedColumns: string[] = ['select', 'id', 'firstName', 'lastName', 'group'];
   headerState: number; // 1 = unchecked, 2 = indeterminate, 3 = checked
   formControl: FormControl;
   selectedStudent: Student;
@@ -90,7 +90,9 @@ export class StudentTable{
     return this.headerState === 2;
   }
   isHeaderChecked(): boolean {
-    return this.headerState === 3;
+    // If state == 2 -> indeterminate == true -> indeterminate state wins over checked
+    // Needed to not break checkbox header animation
+    return this.headerState >= 2;
   }
   onCheckboxChange(i: number, event) {
     this.addedStudents._pageData(this.addedStudents.data)[i].checked = event.checked;
@@ -117,8 +119,8 @@ export class StudentTable{
       'Undo',
       {duration: 3000})
       .onAction().subscribe(() => {
-        this.addedStudents.data = currentStudents;
-        this.filteredStudents = currentFilteredStudents;
+      this.addedStudents.data = currentStudents;
+      this.filteredStudents = currentFilteredStudents;
     });
     this.numberSelected = 0;
   }
@@ -126,8 +128,8 @@ export class StudentTable{
   filterStudents(str: string) {
     this.filteredStudents = this.students
       .filter(value => !this.addedStudents.data.includes(value) &&
-      value.toString().toLowerCase().includes(str.toLowerCase())
-    );
+        value.toString().toLowerCase().includes(str.toLowerCase())
+      );
   }
 
   setSelectedStudent(event: MatAutocompleteSelectedEvent) {
@@ -156,13 +158,13 @@ export class StudentTable{
       'Undo',
       {duration: 3000})
       .onAction().subscribe(
-        () => {
-          this.addedStudents.data = currentStudents;
-          this.filteredStudents = currentFilteredStudents;
-          this.addedStudents.data.forEach(v => v.checked = false);
-          this.numberSelected = 0;
-          this.headerState = 1;
-        }
+      () => {
+        this.addedStudents.data = currentStudents;
+        this.filteredStudents = currentFilteredStudents;
+        this.addedStudents.data.forEach(v => v.checked = false);
+        this.numberSelected = 0;
+        this.headerState = 1;
+      }
     );
     this.selectedStudent = null;
     textInput.value = null;
