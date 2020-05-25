@@ -15,7 +15,7 @@ import {MatSnackBar} from '@angular/material/snack-bar';
 })
 
 export class AppComponent {
-  title = 'lab4';
+  title = 'Virtual Labs';
   studentTable: StudentTable;
   @ViewChild(MatSidenav)
   sidenav: MatSidenav;
@@ -54,6 +54,7 @@ export class StudentTable{
   formControl: FormControl;
   selectedStudent: Student;
   snackBar: MatSnackBar;
+  numberSelected: number;
 
   constructor(students: Array<Student>, snackBar: MatSnackBar) {
     this.students = students;
@@ -61,6 +62,8 @@ export class StudentTable{
     this.filteredStudents = students.filter(value => !this.addedStudents.data.includes(value)).map(value => value);
     this.headerState = 1;
     this.formControl = new FormControl();
+    this.selectedStudent = null;
+    this.numberSelected = 0;
     this.selectedStudent = null;
     this.snackBar = snackBar;
   }
@@ -72,7 +75,16 @@ export class StudentTable{
   }
   onHeaderChange(event){
     this.headerState = event.checked ? 3 : 1;
-    this.addedStudents._pageData(this.addedStudents.data).forEach((v) => v.checked = event.checked);
+    const studentInPage = this.addedStudents._pageData(this.addedStudents.data);
+    let count = 0;
+    studentInPage.forEach((v) => {
+      if (v.checked !== event.checked) {
+        count++;
+        v.checked = event.checked;
+      }
+    });
+
+    this.numberSelected += event.checked ? count : -count;
   }
   isIndeterminate(): boolean{
     return this.headerState === 2;
@@ -83,18 +95,32 @@ export class StudentTable{
   onCheckboxChange(i: number, event) {
     this.addedStudents._pageData(this.addedStudents.data)[i].checked = event.checked;
     this.setHeaderState();
+    this.numberSelected += event.checked ? 1 : -1;
   }
   isCheckboxChecked(i: number): boolean {
     return this.addedStudents._pageData(this.addedStudents.data)[i].checked;
   }
   deleteStudents(){
+    if (this.numberSelected === 0) {
+      this.snackBar.open('Non hai selezionato nessuno studente', '', {duration: 3000});
+      return;
+    }
+    const currentStudents = this.addedStudents.data;
     const filtered: Student[] = this.addedStudents.data.filter(v => !v.checked);
     this.addedStudents.data.forEach(v => v.checked = false);
     this.addedStudents.data = filtered;
     this.headerState = 1;
+    const currentFilteredStudents = this.filteredStudents;
     this.filteredStudents = this.students.filter(v => !this.addedStudents.data.includes(v));
 
-    this.showSnackBar('Gli studenti sono stati rimossi con successo');
+    this.snackBar.open('Gli studenti sono stati rimossi con successo',
+      'Undo',
+      {duration: 3000})
+      .onAction().subscribe(() => {
+        this.addedStudents.data = currentStudents;
+        this.filteredStudents = currentFilteredStudents;
+    });
+    this.numberSelected = 0;
   }
 
   filterStudents(str: string) {
@@ -110,8 +136,12 @@ export class StudentTable{
 
   addStudent(textInput: HTMLInputElement) {
     if (this.selectedStudent === null) {
+      this.snackBar.open('Devi prima cercare e selezionare uno studente', '', {duration: 2000});
       return;
     }
+    const currentStudents: Array<Student> = [...this.addedStudents.data];
+    const currentFilteredStudents: Array<Student> = [...this.filteredStudents];
+    this.selectedStudent.checked = false;
     this.addedStudents.data.push(this.selectedStudent);
     this.addedStudents.data = this.addedStudents.data.map(v => v);
     this.filteredStudents = this.filteredStudents.filter(value => !this.addedStudents.data.includes(value));
@@ -122,7 +152,18 @@ export class StudentTable{
       this.headerState = 2; // If is checked -> become indeterminate
     }
 
-    this.showSnackBar(`${this.selectedStudent.firstName} ${this.selectedStudent.lastName} è stato aggiunto`);
+    this.snackBar.open(`${this.selectedStudent.firstName} ${this.selectedStudent.lastName} è stato aggiunto`,
+      'Undo',
+      {duration: 3000})
+      .onAction().subscribe(
+        () => {
+          this.addedStudents.data = currentStudents;
+          this.filteredStudents = currentFilteredStudents;
+          this.addedStudents.data.forEach(v => v.checked = false);
+          this.numberSelected = 0;
+          this.headerState = 1;
+        }
+    );
     this.selectedStudent = null;
     textInput.value = null;
   }
@@ -137,9 +178,6 @@ export class StudentTable{
     }else{
       this.headerState = 2;
     }
-  }
-  showSnackBar(msg: string){
-    this.snackBar.open(msg, 'Undo', {duration: 2000});
   }
   changePage() {
     this.setHeaderState();

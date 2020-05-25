@@ -16,6 +16,7 @@ import {MatAutocompleteModule} from '@angular/material/autocomplete';
 import {MatPaginatorModule} from '@angular/material/paginator';
 import {MatSortModule} from '@angular/material/sort';
 import {MatSnackBarModule} from '@angular/material/snack-bar';
+import {MatBadgeModule} from '@angular/material/badge';
 
 @NgModule({
   declarations: [
@@ -37,7 +38,8 @@ import {MatSnackBarModule} from '@angular/material/snack-bar';
     MatAutocompleteModule,
     MatPaginatorModule,
     MatSortModule,
-    MatSnackBarModule
+    MatSnackBarModule,
+    MatBadgeModule
   ],
   providers: [],
   bootstrap: [AppComponent]

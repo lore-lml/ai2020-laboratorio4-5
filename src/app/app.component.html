@@ -2,7 +2,7 @@
   <button mat-icon-button (click)="toggleForMenuClick()">
     <mat-icon>menu</mat-icon>
   </button>
-  <h1>VirtualLabs</h1>
+  <h1>{{title}}</h1>
 </mat-toolbar>
 
 <mat-sidenav-container>
@@ -38,7 +38,8 @@
         Aggiungi
       </button>
       <div>
-        <button mat-raised-button color="warn" (click)="studentTable.deleteStudents()">
+        <button mat-raised-button color="warn"
+                (click)="studentTable.deleteStudents()">
           <mat-icon matSuffix>delete</mat-icon>
           Elimina
         </button>
@@ -47,7 +48,11 @@
 
     <mat-tab-group>
 
-      <mat-tab label="Studenti">
+      <mat-tab>
+        <ng-template matTabLabel>
+          <span matBadge="{{studentTable.numberSelected}}" matBadgeOverlap="false"
+                matBadgePosition="above before" matBadgeColor="warn" [matBadgeHidden]="studentTable.numberSelected <= 0">Studenti</span>
+        </ng-template>
         <div class="container">
           <table mat-table [dataSource]="studentTable.addedStudents" matSort class="mat-elevation-z8">
             <!-- Select Column-->
