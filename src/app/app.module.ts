@@ -15,6 +15,7 @@ import {ReactiveFormsModule} from '@angular/forms';
 import {MatAutocompleteModule} from '@angular/material/autocomplete';
 import {MatPaginatorModule} from '@angular/material/paginator';
 import {MatSortModule} from '@angular/material/sort';
+import {MatSnackBarModule} from '@angular/material/snack-bar';
 
 @NgModule({
   declarations: [
@@ -35,7 +36,8 @@ import {MatSortModule} from '@angular/material/sort';
     ReactiveFormsModule,
     MatAutocompleteModule,
     MatPaginatorModule,
-    MatSortModule
+    MatSortModule,
+    MatSnackBarModule
   ],
   providers: [],
   bootstrap: [AppComponent]

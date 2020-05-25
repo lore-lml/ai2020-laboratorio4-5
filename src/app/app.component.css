@@ -14,3 +14,8 @@ div.form-student-table button{
   margin: 5px;
   width: 150px;
 }
+
+mat-toolbar>h1{
+  margin: 0 10px;
+}
+

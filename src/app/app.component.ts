@@ -3,9 +3,10 @@ import {MatSidenav} from '@angular/material/sidenav';
 import {Student} from './student.model';
 import {FormControl} from '@angular/forms';
 import {MatAutocompleteSelectedEvent} from '@angular/material/autocomplete';
-import {MatPaginator, PageEvent} from '@angular/material/paginator';
+import {MatPaginator} from '@angular/material/paginator';
 import {MatTableDataSource} from '@angular/material/table';
 import {MatSort} from '@angular/material/sort';
+import {MatSnackBar} from '@angular/material/snack-bar';
 
 @Component({
   selector: 'app-root',
@@ -15,21 +16,26 @@ import {MatSort} from '@angular/material/sort';
 
 export class AppComponent {
   title = 'lab4';
+  studentTable: StudentTable;
   @ViewChild(MatSidenav)
   sidenav: MatSidenav;
-  studentTable: StudentTable = new StudentTable([
-    new Student('s1', 'Lorenzo', 'Limoli'),
-    new Student('s2', 'Stefano', 'Loscalzo'),
-    new Student('s3', 'Angelo', 'Floridia'),
-    new Student('s4', 'Giovanni', 'Muciaccia'),
-    new Student('s5', 'Alex', 'Astone'),
-    new Student('s6', 'Francesco', 'Rossi'),
-    new Student('s7', 'Giuseppe', 'Noni'),
-    new Student('s8', 'Paola', 'Bianchi')
-  ]);
   @ViewChild(MatPaginator, {static: true}) paginator: MatPaginator;
   @ViewChild(MatSort, {static: true}) sort: MatSort;
-  // tslint:disable-next-line:use-lifecycle-interface
+
+  constructor(private snackBar: MatSnackBar) {
+    this.studentTable = new StudentTable([
+      new Student('s1', 'Lorenzo', 'Limoli'),
+      new Student('s2', 'Stefano', 'Loscalzo'),
+      new Student('s3', 'Angelo', 'Floridia'),
+      new Student('s4', 'Giovanni', 'Muciaccia'),
+      new Student('s5', 'Alex', 'Astone'),
+      new Student('s6', 'Francesco', 'Rossi'),
+      new Student('s7', 'Giuseppe', 'Noni'),
+      new Student('s8', 'Paola', 'Bianchi')
+    ], snackBar);
+  }
+
+// tslint:disable-next-line:use-lifecycle-interface
   ngOnInit() {
     this.studentTable.addedStudents.paginator = this.paginator;
     this.studentTable.addedStudents.sort = this.sort;
@@ -47,14 +53,16 @@ export class StudentTable{
   headerState: number; // 1 = unchecked, 2 = indeterminate, 3 = checked
   formControl: FormControl;
   selectedStudent: Student;
+  snackBar: MatSnackBar;
 
-  constructor(students: Array<Student>) {
+  constructor(students: Array<Student>, snackBar: MatSnackBar) {
     this.students = students;
     this.addedStudents = new MatTableDataSource<Student>([students[0], students[1]]);
     this.filteredStudents = students.filter(value => !this.addedStudents.data.includes(value)).map(value => value);
     this.headerState = 1;
     this.formControl = new FormControl();
     this.selectedStudent = null;
+    this.snackBar = snackBar;
   }
   displayStudent(student: Student): string{
     if (student !== null){
@@ -63,14 +71,8 @@ export class StudentTable{
     return '';
   }
   onHeaderChange(event){
-    if (event.checked){
-      this.headerState = 3;
-      this.addedStudents._pageData(this.addedStudents.data).forEach((v) => v.checked = true);
-      return;
-    }
-    this.headerState = 1;
-    this.addedStudents._pageData(this.addedStudents.data).forEach((v) => v.checked = false);
-    return;
+    this.headerState = event.checked ? 3 : 1;
+    this.addedStudents._pageData(this.addedStudents.data).forEach((v) => v.checked = event.checked);
   }
   isIndeterminate(): boolean{
     return this.headerState === 2;
@@ -91,6 +93,8 @@ export class StudentTable{
     this.addedStudents.data = filtered;
     this.headerState = 1;
     this.filteredStudents = this.students.filter(v => !this.addedStudents.data.includes(v));
+
+    this.showSnackBar('Gli studenti sono stati rimossi con successo');
   }
 
   filterStudents(str: string) {
@@ -111,12 +115,16 @@ export class StudentTable{
     this.addedStudents.data.push(this.selectedStudent);
     this.addedStudents.data = this.addedStudents.data.map(v => v);
     this.filteredStudents = this.filteredStudents.filter(value => !this.addedStudents.data.includes(value));
-    this.selectedStudent = null;
-    textInput.value = null;
 
-    if (this.isHeaderChecked()){
+    const studentInPage = this.addedStudents._pageData(this.addedStudents.data);
+    const checkedInPage = studentInPage.filter(v => v.checked).length;
+    if (checkedInPage < studentInPage.length  && this.isHeaderChecked()){
       this.headerState = 2; // If is checked -> become indeterminate
     }
+
+    this.showSnackBar(`${this.selectedStudent.firstName} ${this.selectedStudent.lastName} è stato aggiunto`);
+    this.selectedStudent = null;
+    textInput.value = null;
   }
 
   private setHeaderState(){
@@ -130,7 +138,9 @@ export class StudentTable{
       this.headerState = 2;
     }
   }
-
+  showSnackBar(msg: string){
+    this.snackBar.open(msg, 'Undo', {duration: 2000});
+  }
   changePage() {
     this.setHeaderState();
   }
