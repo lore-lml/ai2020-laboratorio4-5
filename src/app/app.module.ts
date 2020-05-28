@@ -17,10 +17,14 @@ import {MatPaginatorModule} from '@angular/material/paginator';
 import {MatSortModule} from '@angular/material/sort';
 import {MatSnackBarModule} from '@angular/material/snack-bar';
 import {MatBadgeModule} from '@angular/material/badge';
+import { StudentsComponent } from './teacher/students.component';
+import { StudentsContComponent } from './teacher/students-cont.component';
 
 @NgModule({
   declarations: [
-    AppComponent
+    AppComponent,
+    StudentsComponent,
+    StudentsContComponent
   ],
   imports: [
     BrowserModule,

@@ -1,0 +1,16 @@
+table{width: 100%;}
+mat-sidenav-container{ height: 100%; }
+
+div.form-student-table{
+  margin: 10px 0 10px 10px;
+}
+
+div.form-student-table>mat-form-field{
+  margin-right: 10px;
+  width: 350px;
+}
+
+div.form-student-table button{
+  margin: 5px;
+  width: 150px;
+}
