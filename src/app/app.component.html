@@ -4,7 +4,7 @@
   </button>
   <h1>{{title}}</h1>
 </mat-toolbar>
-
+<mat-toolbar>Applicazioni Internet</mat-toolbar>
 <mat-sidenav-container>
   <!-- ************************* SIDENAV ********************-->
   <mat-sidenav #sidenav opened mode="side" position="start">
@@ -17,39 +17,38 @@
   </mat-sidenav>
   <!-- ************************* SIDENAV CONTENT********************-->
   <mat-sidenav-content>
-    <mat-toolbar color="">Applicazioni Internet</mat-toolbar>
-    <div class="form-student-table">
-      <mat-form-field appearance="outline">
-        <mat-label>Aggiungi uno Studente</mat-label>
-        <input #textInput matInput type="search" placeholder="Cerca lo studente che vuoi aggiungere"
-              [formControl]="studentTable.formControl"
-              [matAutocomplete]="auto"
-              (keyup)="studentTable.filterStudents(textInput.value)">
-        <mat-autocomplete #auto="matAutocomplete"
-                          [displayWith]="studentTable.displayStudent"
-                          (optionSelected)="studentTable.setSelectedStudent($event)">
-          <mat-option *ngFor="let student of studentTable.filteredStudents" [value]="student">
-            {{student}}
-          </mat-option>
-        </mat-autocomplete>
-      </mat-form-field>
-      <button mat-raised-button color="primary"
-      (click)="studentTable.addStudent(textInput)">
-        <mat-icon matSuffix>person_add</mat-icon>
-        Aggiungi
-      </button>
-      <div>
-        <button mat-raised-button color="warn"
-                (click)="studentTable.deleteStudents()">
-          <mat-icon matSuffix>delete</mat-icon>
-          Elimina
-        </button>
-      </div>
-    </div>
 
     <mat-tab-group>
-
       <mat-tab>
+        <mat-toolbar class="tab-title">Applicazioni Internet</mat-toolbar>
+        <div class="form-student-table">
+          <mat-form-field appearance="outline">
+            <mat-label>Aggiungi uno Studente</mat-label>
+            <input #textInput matInput type="search" placeholder="Cerca lo studente che vuoi aggiungere"
+                   [formControl]="studentTable.formControl"
+                   [matAutocomplete]="auto"
+                   (keyup)="studentTable.filterStudents(textInput.value)">
+            <mat-autocomplete #auto="matAutocomplete"
+                              [displayWith]="studentTable.displayStudent"
+                              (optionSelected)="studentTable.setSelectedStudent($event)">
+              <mat-option *ngFor="let student of studentTable.filteredStudents" [value]="student">
+                {{student}}
+              </mat-option>
+            </mat-autocomplete>
+          </mat-form-field>
+          <button mat-raised-button color="primary"
+                  (click)="studentTable.addStudent(textInput)">
+            <mat-icon matSuffix>person_add</mat-icon>
+            Aggiungi
+          </button>
+          <div>
+            <button mat-raised-button color="warn"
+                    (click)="studentTable.deleteStudents()">
+              <mat-icon matSuffix>delete</mat-icon>
+              Elimina
+            </button>
+          </div>
+        </div>
         <ng-template matTabLabel>
           <span matBadge="{{studentTable.numberSelected}}" matBadgeOverlap="false"
                 matBadgePosition="above before" matBadgeColor="warn" [matBadgeHidden]="studentTable.numberSelected <= 0">Studenti</span>
