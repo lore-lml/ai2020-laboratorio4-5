@@ -1,6 +1,6 @@
-import {Component, OnInit} from '@angular/core';
+import {AfterViewInit, Component, OnInit, ViewChild} from '@angular/core';
 import {Student} from '../student.model';
-import {MatTableDataSource} from '@angular/material/table';
+import {StudentsComponent} from './students.component';
 
 @Component({
   selector: 'app-students-cont',
@@ -8,9 +8,10 @@ import {MatTableDataSource} from '@angular/material/table';
   styleUrls: ['./students-cont.component.css']
 })
 export class StudentsContComponent implements OnInit {
-
+  @ViewChild(StudentsComponent)
+  private studentsComponent: StudentsComponent;
   students: ReadonlyArray<Student>;
-  enrolledStudents: MatTableDataSource<Student>;
+  enrolledStudents: Student[] = [];
 
   constructor() {
     this.students = [
@@ -23,9 +24,18 @@ export class StudentsContComponent implements OnInit {
       new Student('s7', 'Giuseppe', 'Noni'),
       new Student('s8', 'Paola', 'Bianchi')
     ];
-    this.enrolledStudents = new MatTableDataSource<Student>([this.students[0], this.students[1]]);
+    this.enrolledStudents = [this.students[0], this.students[1]];
   }
 
   ngOnInit(): void {
+  }
+
+  addStudents(students: Student[]) {
+    students.forEach(s => {
+      if (!this.enrolledStudents.includes(s)){
+        this.enrolledStudents.push(s);
+      }
+    });
+    this.studentsComponent.setEnrolledStudents = this.enrolledStudents;
   }
 }

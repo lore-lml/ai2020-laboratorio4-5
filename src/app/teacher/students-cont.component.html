@@ -1,4 +1,5 @@
 <app-students
-  [enrolledStudents]="enrolledStudents"
-  [students]="students">
+  [setEnrolledStudents]="enrolledStudents"
+  [students]="students"
+  (addStudentEvent)="addStudents($event)">
 </app-students>

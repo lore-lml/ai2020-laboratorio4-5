@@ -1,8 +1,8 @@
-import {Component, Input, OnInit, Output, ViewChild} from '@angular/core';
+import {Component, EventEmitter, Input, OnInit, Output, ViewChild} from '@angular/core';
 import {Student} from '../student.model';
 import {MatTableDataSource} from '@angular/material/table';
 import {FormControl} from '@angular/forms';
-import {MatSnackBar} from '@angular/material/snack-bar';
+import {MatSnackBar, MatSnackBarRef, SimpleSnackBar} from '@angular/material/snack-bar';
 import {MatAutocompleteSelectedEvent} from '@angular/material/autocomplete';
 import {MatPaginator} from '@angular/material/paginator';
 import {MatSort} from '@angular/material/sort';
@@ -18,9 +18,9 @@ export class StudentsComponent implements OnInit {
   @ViewChild(MatPaginator, {static: true}) paginator: MatPaginator;
   @ViewChild(MatSort, {static: true}) sort: MatSort;
 
-  @Input() @Output()
+  @Input()
   students: ReadonlyArray<Student>;
-  @Input() @Output()
+  @Input()
   enrolledStudents: MatTableDataSource<Student>;
   filteredStudents: Observable<Student[]>;
   displayedColumns: string[] = ['select', 'id', 'firstName', 'lastName', 'group'];
@@ -28,6 +28,12 @@ export class StudentsComponent implements OnInit {
   formControl: FormControl;
   selectedStudent: Student;
   numberSelected: number;
+
+  @Output()
+  private addStudentEvent: EventEmitter<Student[]>;
+  @Output()
+  private deleteStudentEvent: EventEmitter<Student[]>;
+  private eventEmitted: boolean;
 
   ngOnInit(): void {
     this.enrolledStudents.paginator = this.paginator;
@@ -49,15 +55,48 @@ export class StudentsComponent implements OnInit {
       new Student('s6', 'Francesco', 'Rossi'),
       new Student('s7', 'Giuseppe', 'Noni'),
       new Student('s8', 'Paola', 'Bianchi')
-    ];
-    this.enrolledStudents = new MatTableDataSource<Student>([this.students[0], this.students[1]]);*/
+    ];*/
+    this.enrolledStudents = new MatTableDataSource<Student>();
 
     this.headerState = 1;
     this.formControl = new FormControl();
     this.selectedStudent = null;
     this.numberSelected = 0;
     this.selectedStudent = null;
+
+    this.addStudentEvent = new EventEmitter<Student[]>();
+    this.deleteStudentEvent = new EventEmitter<Student[]>();
+    this.eventEmitted = false;
   }
+
+  @Input() set setEnrolledStudents(students: Student[]){
+    const currentStudents: Array<Student> = this.enrolledStudents.data.map(value => value);
+    this.enrolledStudents.data = students.map(value => value);
+    this.setHeaderState();
+
+    if (this.eventEmitted){
+      const snackBarRef: MatSnackBarRef<SimpleSnackBar> = currentStudents.length < students.length ?
+        this.snackBar.open('Lo studente è stato aggiunto con successo',
+          'Annulla',
+          {duration: 3000})
+        :
+        this.snackBar.open('Gli studenti sono stato rimossi con successo',
+          'Annulla',
+          {duration: 3000});
+
+      snackBarRef.onAction().subscribe(
+        () => {
+          this.enrolledStudents.data = currentStudents;
+          this.enrolledStudents.data.forEach(v => v.checked = false);
+          this.numberSelected = 0;
+          this.headerState = 1;
+          this.formControl.setValue('');
+        }
+      );
+    }
+
+  }
+
   displayStudent(student: Student): string{
     if (student !== null){
       return student.toString();
@@ -127,12 +166,11 @@ export class StudentsComponent implements OnInit {
   }
 
   addStudent() {
-    this.filteredStudents.toPromise().then(value => console.log(value));
     if (this.selectedStudent === null) {
       this.snackBar.open('Devi prima cercare e selezionare uno studente', '', {duration: 2000});
       return;
     }
-    const currentStudents: Array<Student> = [...this.enrolledStudents.data];
+    /*const currentStudents: Array<Student> = [...this.enrolledStudents.data];
     this.selectedStudent.checked = false;
     this.enrolledStudents.data.push(this.selectedStudent);
     this.enrolledStudents.data = this.enrolledStudents.data.map(v => v);
@@ -154,7 +192,9 @@ export class StudentsComponent implements OnInit {
         this.headerState = 1;
         this.formControl.setValue('');
       }
-    );
+    );*/
+    this.eventEmitted = true;
+    this.addStudentEvent.emit([this.selectedStudent]);
     this.selectedStudent = null;
     this.formControl.setValue('');
   }
