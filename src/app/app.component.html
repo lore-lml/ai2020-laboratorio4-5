@@ -20,24 +20,23 @@
 
     <mat-tab-group>
       <mat-tab>
-        <mat-toolbar class="tab-title">Applicazioni Internet</mat-toolbar>
+        <mat-toolbar class="tab-title">Studenti iscritti</mat-toolbar>
         <div class="form-student-table">
           <mat-form-field appearance="outline">
             <mat-label>Aggiungi uno Studente</mat-label>
-            <input #textInput matInput type="search" placeholder="Cerca lo studente che vuoi aggiungere"
+            <input matInput type="search" placeholder="Cerca lo studente che vuoi aggiungere"
                    [formControl]="studentTable.formControl"
-                   [matAutocomplete]="auto"
-                   (keyup)="studentTable.filterStudents(textInput.value)">
+                   [matAutocomplete]="auto">
             <mat-autocomplete #auto="matAutocomplete"
                               [displayWith]="studentTable.displayStudent"
                               (optionSelected)="studentTable.setSelectedStudent($event)">
-              <mat-option *ngFor="let student of studentTable.filteredStudents" [value]="student">
+              <mat-option *ngFor="let student of studentTable.filteredStudents | async" [value]="student">
                 {{student}}
               </mat-option>
             </mat-autocomplete>
           </mat-form-field>
           <button mat-raised-button color="primary"
-                  (click)="studentTable.addStudent(textInput)">
+                  (click)="studentTable.addStudent()">
             <mat-icon matSuffix>person_add</mat-icon>
             Aggiungi
           </button>
@@ -54,7 +53,7 @@
                 matBadgePosition="above before" matBadgeColor="warn" [matBadgeHidden]="studentTable.numberSelected <= 0">Studenti</span>
         </ng-template>
         <div class="container">
-          <table mat-table [dataSource]="studentTable.addedStudents" matSort class="mat-elevation-z8">
+          <table mat-table [dataSource]="studentTable.enrolledStudents" matSort class="mat-elevation-z8">
             <!-- Select Column-->
             <ng-container matColumnDef="select">
               <th mat-header-cell *matHeaderCellDef>
