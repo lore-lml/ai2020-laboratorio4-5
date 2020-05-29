@@ -19,12 +19,19 @@ import {MatSnackBarModule} from '@angular/material/snack-bar';
 import {MatBadgeModule} from '@angular/material/badge';
 import { StudentsComponent } from './teacher/students.component';
 import { StudentsContComponent } from './teacher/students-cont.component';
+import {AppRoutingModule} from './app-routing-module';
+import { HomeComponent } from './home.component';
+import { PageNotFoundComponent } from './page-not-found.component';
+import {VmsContComponent} from './teacher/vms-cont.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     StudentsComponent,
-    StudentsContComponent
+    StudentsContComponent,
+    HomeComponent,
+    PageNotFoundComponent,
+    VmsContComponent
   ],
   imports: [
     BrowserModule,
@@ -43,7 +50,8 @@ import { StudentsContComponent } from './teacher/students-cont.component';
     MatPaginatorModule,
     MatSortModule,
     MatSnackBarModule,
-    MatBadgeModule
+    MatBadgeModule,
+    AppRoutingModule,
   ],
   providers: [],
   bootstrap: [AppComponent]

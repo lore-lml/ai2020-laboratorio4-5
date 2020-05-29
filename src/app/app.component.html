@@ -2,7 +2,7 @@
   <button mat-icon-button (click)="toggleForMenuClick()">
     <mat-icon>menu</mat-icon>
   </button>
-  <h1>{{title}}</h1>
+  <a routerLink="/home">{{title}}</a>
 </mat-toolbar>
 <mat-toolbar color="">Applicazioni Internet</mat-toolbar>
 <mat-sidenav-container>
@@ -10,16 +10,17 @@
   <mat-sidenav #sidenav opened mode="side" position="start">
     <div class="container">
       <mat-nav-list>
-        <mat-list-item>Applicazioni Internet</mat-list-item>
+        <mat-list-item routerLink="/teacher/course/applicazioni-internet/students">Applicazioni Internet</mat-list-item>
         <mat-list-item>Programmazione di Sistema</mat-list-item>
       </mat-nav-list>
     </div>
   </mat-sidenav>
   <!-- ************************* SIDENAV CONTENT********************-->
   <mat-sidenav-content>
+    <!--
     <mat-tab-group>
       <mat-tab label="Studenti">
-        <app-students></app-students>
+        <app-students-cont></app-students-cont>
       </mat-tab>
 
       <mat-tab label="Gruppi">
@@ -28,7 +29,12 @@
         </div>
       </mat-tab>
     </mat-tab-group>
-
+   -->
+    <nav mat-tab-nav-bar>
+      <a mat-tab-link routerLink="teacher/course/applicazioni-internet/students">Students</a>
+      <a mat-tab-link routerLink="teacher/course/applicazioni-internet/vms">VMs</a>
+    </nav>
+    <router-outlet></router-outlet>
   </mat-sidenav-content>
 </mat-sidenav-container>
 

@@ -26,10 +26,6 @@
     </button>
   </div>
 </div>
-<ng-template matTabLabel>
-          <span matBadge="{{numberSelected}}" matBadgeOverlap="false"
-                matBadgePosition="above before" matBadgeColor="warn" [matBadgeHidden]="numberSelected <= 0">Studenti</span>
-</ng-template>
 <div class="container">
   <table mat-table [dataSource]="enrolledStudents" matSort class="mat-elevation-z8">
     <!-- Select Column-->

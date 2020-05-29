@@ -6,3 +6,8 @@ mat-sidenav-container{ height: 100%; }
 mat-toolbar.tab-title{
   background: white;
 }
+
+mat-toolbar>a{
+  color: white;
+  text-decoration: none;
+}

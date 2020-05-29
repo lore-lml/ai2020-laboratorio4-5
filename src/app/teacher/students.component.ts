@@ -1,4 +1,4 @@
-import {Component, OnInit, ViewChild} from '@angular/core';
+import {Component, Input, OnInit, Output, ViewChild} from '@angular/core';
 import {Student} from '../student.model';
 import {MatTableDataSource} from '@angular/material/table';
 import {FormControl} from '@angular/forms';
@@ -18,7 +18,9 @@ export class StudentsComponent implements OnInit {
   @ViewChild(MatPaginator, {static: true}) paginator: MatPaginator;
   @ViewChild(MatSort, {static: true}) sort: MatSort;
 
+  @Input() @Output()
   students: ReadonlyArray<Student>;
+  @Input() @Output()
   enrolledStudents: MatTableDataSource<Student>;
   filteredStudents: Observable<Student[]>;
   displayedColumns: string[] = ['select', 'id', 'firstName', 'lastName', 'group'];
@@ -38,7 +40,7 @@ export class StudentsComponent implements OnInit {
   }
 
   constructor(private snackBar: MatSnackBar) {
-    this.students = [
+    /*this.students = [
       new Student('s1', 'Lorenzo', 'Limoli'),
       new Student('s2', 'Stefano', 'Loscalzo'),
       new Student('s3', 'Angelo', 'Floridia'),
@@ -48,7 +50,8 @@ export class StudentsComponent implements OnInit {
       new Student('s7', 'Giuseppe', 'Noni'),
       new Student('s8', 'Paola', 'Bianchi')
     ];
-    this.enrolledStudents = new MatTableDataSource<Student>([this.students[0], this.students[1]]);
+    this.enrolledStudents = new MatTableDataSource<Student>([this.students[0], this.students[1]]);*/
+
     this.headerState = 1;
     this.formControl = new FormControl();
     this.selectedStudent = null;
