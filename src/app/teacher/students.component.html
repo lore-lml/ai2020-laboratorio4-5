@@ -1,21 +1,20 @@
-
+<mat-toolbar class="tab-title">Studenti iscritti</mat-toolbar>
 <div class="form-student-table">
   <mat-form-field appearance="outline">
     <mat-label>Aggiungi uno Studente</mat-label>
-    <input #textInput matInput type="search" placeholder="Cerca lo studente che vuoi aggiungere"
+    <input matInput type="search" placeholder="Cerca lo studente che vuoi aggiungere"
            [formControl]="formControl"
-           [matAutocomplete]="auto"
-           (keyup)="filterStudents(textInput.value)">
+           [matAutocomplete]="auto">
     <mat-autocomplete #auto="matAutocomplete"
                       [displayWith]="displayStudent"
                       (optionSelected)="setSelectedStudent($event)">
-      <mat-option *ngFor="let student of filteredStudents" [value]="student">
+      <mat-option *ngFor="let student of filteredStudents | async" [value]="student">
         {{student}}
       </mat-option>
     </mat-autocomplete>
   </mat-form-field>
   <button mat-raised-button color="primary"
-          (click)="addStudent(textInput)">
+          (click)="addStudent()">
     <mat-icon matSuffix>person_add</mat-icon>
     Aggiungi
   </button>
@@ -28,11 +27,11 @@
   </div>
 </div>
 <ng-template matTabLabel>
-        <span matBadge="{{numberSelected}}" matBadgeOverlap="false"
-              matBadgePosition="above before" matBadgeColor="warn" [matBadgeHidden]="numberSelected <= 0">Studenti</span>
+          <span matBadge="{{numberSelected}}" matBadgeOverlap="false"
+                matBadgePosition="above before" matBadgeColor="warn" [matBadgeHidden]="numberSelected <= 0">Studenti</span>
 </ng-template>
 <div class="container">
-  <table mat-table [dataSource]="addedStudents" matSort class="mat-elevation-z8">
+  <table mat-table [dataSource]="enrolledStudents" matSort class="mat-elevation-z8">
     <!-- Select Column-->
     <ng-container matColumnDef="select">
       <th mat-header-cell *matHeaderCellDef>
@@ -75,4 +74,3 @@
   </table>
   <mat-paginator [pageSizeOptions]="[5, 10, 30]" showFirstLastButtons (page)="changePage()"></mat-paginator>
 </div>
-

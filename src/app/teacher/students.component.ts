@@ -6,6 +6,8 @@ import {MatSnackBar} from '@angular/material/snack-bar';
 import {MatAutocompleteSelectedEvent} from '@angular/material/autocomplete';
 import {MatPaginator} from '@angular/material/paginator';
 import {MatSort} from '@angular/material/sort';
+import {Observable} from 'rxjs';
+import {map, startWith} from 'rxjs/operators';
 
 @Component({
   selector: 'app-students',
@@ -17,8 +19,8 @@ export class StudentsComponent implements OnInit {
   @ViewChild(MatSort, {static: true}) sort: MatSort;
 
   students: ReadonlyArray<Student>;
-  addedStudents: MatTableDataSource<Student>;
-  filteredStudents: Array<Student>;
+  enrolledStudents: MatTableDataSource<Student>;
+  filteredStudents: Observable<Student[]>;
   displayedColumns: string[] = ['select', 'id', 'firstName', 'lastName', 'group'];
   headerState: number; // 1 = unchecked, 2 = indeterminate, 3 = checked
   formControl: FormControl;
@@ -26,8 +28,13 @@ export class StudentsComponent implements OnInit {
   numberSelected: number;
 
   ngOnInit(): void {
-    this.addedStudents.paginator = this.paginator;
-    this.addedStudents.sort = this.sort;
+    this.enrolledStudents.paginator = this.paginator;
+    this.enrolledStudents.sort = this.sort;
+    this.filteredStudents = this.formControl.valueChanges
+      .pipe(
+        startWith(''),
+        map(value => this.filterStudents(value))
+      );
   }
 
   constructor(private snackBar: MatSnackBar) {
@@ -41,8 +48,7 @@ export class StudentsComponent implements OnInit {
       new Student('s7', 'Giuseppe', 'Noni'),
       new Student('s8', 'Paola', 'Bianchi')
     ];
-    this.addedStudents = new MatTableDataSource<Student>([this.students[0], this.students[1]]);
-    this.filteredStudents = this.students.filter(value => !this.addedStudents.data.includes(value)).map(value => value);
+    this.enrolledStudents = new MatTableDataSource<Student>([this.students[0], this.students[1]]);
     this.headerState = 1;
     this.formControl = new FormControl();
     this.selectedStudent = null;
@@ -57,7 +63,7 @@ export class StudentsComponent implements OnInit {
   }
   onHeaderChange(event){
     this.headerState = event.checked ? 3 : 1;
-    const studentInPage = this.addedStudents._pageData(this.addedStudents.data);
+    const studentInPage = this.enrolledStudents._pageData(this.enrolledStudents.data);
     let count = 0;
     studentInPage.forEach((v) => {
       if (v.checked !== event.checked) {
@@ -77,40 +83,39 @@ export class StudentsComponent implements OnInit {
     return this.headerState >= 2;
   }
   onCheckboxChange(i: number, event) {
-    this.addedStudents._pageData(this.addedStudents.data)[i].checked = event.checked;
+    this.enrolledStudents._pageData(this.enrolledStudents.data)[i].checked = event.checked;
     this.setHeaderState();
     this.numberSelected += event.checked ? 1 : -1;
   }
   isCheckboxChecked(i: number): boolean {
-    return this.addedStudents._pageData(this.addedStudents.data)[i].checked;
+    return this.enrolledStudents._pageData(this.enrolledStudents.data)[i].checked;
   }
   deleteStudents(){
     if (this.numberSelected === 0) {
       this.snackBar.open('Non hai selezionato nessuno studente', '', {duration: 3000});
       return;
     }
-    const currentStudents = this.addedStudents.data;
-    const filtered: Student[] = this.addedStudents.data.filter(v => !v.checked);
-    this.addedStudents.data.forEach(v => v.checked = false);
-    this.addedStudents.data = filtered;
+    const currentStudents = this.enrolledStudents.data;
+    const filtered: Student[] = this.enrolledStudents.data.filter(v => !v.checked);
+    this.enrolledStudents.data.forEach(v => v.checked = false);
+    this.enrolledStudents.data = filtered;
     this.headerState = 1;
-    const currentFilteredStudents = this.filteredStudents;
-    this.filteredStudents = this.students.filter(v => !this.addedStudents.data.includes(v));
 
     this.snackBar.open('Gli studenti sono stati rimossi con successo',
       'Undo',
       {duration: 3000})
       .onAction().subscribe(() => {
-      this.addedStudents.data = currentStudents;
-      this.filteredStudents = currentFilteredStudents;
+      this.enrolledStudents.data = currentStudents;
+      this.formControl.setValue('');
     });
     this.numberSelected = 0;
+    this.formControl.setValue('');
   }
 
   filterStudents(str: string) {
-    this.filteredStudents = this.students
-      .filter(value => !this.addedStudents.data.includes(value) &&
-        value.toString().toLowerCase().includes(str.toLowerCase())
+    return this.students
+      .filter(value => !this.enrolledStudents.data.includes(value) &&
+        value.toString().toLowerCase().includes(str.toString().toLowerCase())
       );
   }
 
@@ -118,19 +123,18 @@ export class StudentsComponent implements OnInit {
     this.selectedStudent = event.option.value;
   }
 
-  addStudent(textInput: HTMLInputElement) {
+  addStudent() {
+    this.filteredStudents.toPromise().then(value => console.log(value));
     if (this.selectedStudent === null) {
       this.snackBar.open('Devi prima cercare e selezionare uno studente', '', {duration: 2000});
       return;
     }
-    const currentStudents: Array<Student> = [...this.addedStudents.data];
-    const currentFilteredStudents: Array<Student> = [...this.filteredStudents];
+    const currentStudents: Array<Student> = [...this.enrolledStudents.data];
     this.selectedStudent.checked = false;
-    this.addedStudents.data.push(this.selectedStudent);
-    this.addedStudents.data = this.addedStudents.data.map(v => v);
-    this.filteredStudents = this.filteredStudents.filter(value => !this.addedStudents.data.includes(value));
+    this.enrolledStudents.data.push(this.selectedStudent);
+    this.enrolledStudents.data = this.enrolledStudents.data.map(v => v);
 
-    const studentInPage = this.addedStudents._pageData(this.addedStudents.data);
+    const studentInPage = this.enrolledStudents._pageData(this.enrolledStudents.data);
     const checkedInPage = studentInPage.filter(v => v.checked).length;
     if (checkedInPage < studentInPage.length  && this.isHeaderChecked()){
       this.headerState = 2; // If is checked -> become indeterminate
@@ -141,19 +145,19 @@ export class StudentsComponent implements OnInit {
       {duration: 3000})
       .onAction().subscribe(
       () => {
-        this.addedStudents.data = currentStudents;
-        this.filteredStudents = currentFilteredStudents;
-        this.addedStudents.data.forEach(v => v.checked = false);
+        this.enrolledStudents.data = currentStudents;
+        this.enrolledStudents.data.forEach(v => v.checked = false);
         this.numberSelected = 0;
         this.headerState = 1;
+        this.formControl.setValue('');
       }
     );
     this.selectedStudent = null;
-    textInput.value = null;
+    this.formControl.setValue('');
   }
 
   private setHeaderState(){
-    const pageData: Student[] = this.addedStudents._pageData(this.addedStudents.data);
+    const pageData: Student[] = this.enrolledStudents._pageData(this.enrolledStudents.data);
     const numberOfChecked = pageData.map(v => v.checked).filter(value => value === true).length;
     if (numberOfChecked === 0){
       this.headerState = 1;
@@ -166,5 +170,4 @@ export class StudentsComponent implements OnInit {
   changePage() {
     this.setHeaderState();
   }
-
 }
