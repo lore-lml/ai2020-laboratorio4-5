@@ -33,6 +33,8 @@ export class StudentsComponent implements OnInit {
   private addStudentEvent: EventEmitter<Student[]>;
   @Output()
   private deleteStudentEvent: EventEmitter<Student[]>;
+  @Output()
+  private restoreEvent: EventEmitter<Student[]>;
   private eventEmitted: boolean;
 
   ngOnInit(): void {
@@ -62,10 +64,10 @@ export class StudentsComponent implements OnInit {
     this.formControl = new FormControl();
     this.selectedStudent = null;
     this.numberSelected = 0;
-    this.selectedStudent = null;
 
     this.addStudentEvent = new EventEmitter<Student[]>();
     this.deleteStudentEvent = new EventEmitter<Student[]>();
+    this.restoreEvent = new EventEmitter<Student[]>();
     this.eventEmitted = false;
   }
 
@@ -84,17 +86,21 @@ export class StudentsComponent implements OnInit {
           'Annulla',
           {duration: 3000});
 
+      if (currentStudents.length > students.length){
+        this.enrolledStudents.data.forEach(s => s.checked = false);
+        this.numberSelected = 0;
+      }
       snackBarRef.onAction().subscribe(
         () => {
-          this.enrolledStudents.data = currentStudents;
-          this.enrolledStudents.data.forEach(v => v.checked = false);
+          currentStudents.forEach(v => v.checked = false);
+          this.restoreEvent.emit(currentStudents);
           this.numberSelected = 0;
           this.headerState = 1;
           this.formControl.setValue('');
         }
       );
     }
-
+    this.eventEmitted = false;
   }
 
   displayStudent(student: Student): string{
@@ -137,7 +143,7 @@ export class StudentsComponent implements OnInit {
       this.snackBar.open('Non hai selezionato nessuno studente', '', {duration: 3000});
       return;
     }
-    const currentStudents = this.enrolledStudents.data;
+    /*const currentStudents = this.enrolledStudents.data;
     const filtered: Student[] = this.enrolledStudents.data.filter(v => !v.checked);
     this.enrolledStudents.data.forEach(v => v.checked = false);
     this.enrolledStudents.data = filtered;
@@ -151,6 +157,11 @@ export class StudentsComponent implements OnInit {
       this.formControl.setValue('');
     });
     this.numberSelected = 0;
+     */
+    this.eventEmitted = true;
+    const studentsToDelete: Student[] = this.enrolledStudents.data.filter(v => v.checked);
+    studentsToDelete.forEach(v => v.checked = false);
+    this.deleteStudentEvent.emit(studentsToDelete);
     this.formControl.setValue('');
   }
 

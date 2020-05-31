@@ -38,4 +38,14 @@ export class StudentsContComponent implements OnInit {
     });
     this.studentsComponent.setEnrolledStudents = this.enrolledStudents;
   }
+
+  deleteStudents(students: Student[]) {
+    this.enrolledStudents = this.enrolledStudents.filter(s => !students.includes(s));
+    this.studentsComponent.setEnrolledStudents = this.enrolledStudents;
+  }
+
+  restoreStudents(students: Student[]) {
+    this.enrolledStudents = students;
+    this.studentsComponent.setEnrolledStudents = this.enrolledStudents;
+  }
 }

@@ -1,5 +1,7 @@
 <app-students
   [setEnrolledStudents]="enrolledStudents"
   [students]="students"
-  (addStudentEvent)="addStudents($event)">
+  (addStudentEvent)="addStudents($event)"
+  (deleteStudentEvent)="deleteStudents($event)"
+  (restoreEvent)="restoreStudents($event)">
 </app-students>
