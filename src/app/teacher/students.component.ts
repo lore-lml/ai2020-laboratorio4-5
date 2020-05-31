@@ -14,14 +14,15 @@ import {map, startWith} from 'rxjs/operators';
   templateUrl: './students.component.html',
   styleUrls: ['./students.component.css']
 })
+
 export class StudentsComponent implements OnInit {
   @ViewChild(MatPaginator, {static: true}) paginator: MatPaginator;
   @ViewChild(MatSort, {static: true}) sort: MatSort;
 
   @Input()
   students: ReadonlyArray<Student>;
-  @Input()
-  enrolledStudents: MatTableDataSource<Student>;
+  // tslint:disable-next-line:variable-name
+  _enrolledStudents: MatTableDataSource<Student>;
   filteredStudents: Observable<Student[]>;
   displayedColumns: string[] = ['select', 'id', 'firstName', 'lastName', 'group'];
   headerState: number; // 1 = unchecked, 2 = indeterminate, 3 = checked
@@ -38,8 +39,8 @@ export class StudentsComponent implements OnInit {
   private eventEmitted: boolean;
 
   ngOnInit(): void {
-    this.enrolledStudents.paginator = this.paginator;
-    this.enrolledStudents.sort = this.sort;
+    this._enrolledStudents.paginator = this.paginator;
+    this._enrolledStudents.sort = this.sort;
     this.filteredStudents = this.formControl.valueChanges
       .pipe(
         startWith(''),
@@ -58,7 +59,7 @@ export class StudentsComponent implements OnInit {
       new Student('s7', 'Giuseppe', 'Noni'),
       new Student('s8', 'Paola', 'Bianchi')
     ];*/
-    this.enrolledStudents = new MatTableDataSource<Student>();
+    this._enrolledStudents = new MatTableDataSource<Student>();
 
     this.headerState = 1;
     this.formControl = new FormControl();
@@ -71,9 +72,12 @@ export class StudentsComponent implements OnInit {
     this.eventEmitted = false;
   }
 
-  @Input() set setEnrolledStudents(students: Student[]){
-    const currentStudents: Array<Student> = this.enrolledStudents.data.map(value => value);
-    this.enrolledStudents.data = students.map(value => value);
+  @Input() set enrolledStudents(students: Student[]){
+    const currentStudents: Array<Student> = this._enrolledStudents.data.map(value => value);
+    this._enrolledStudents.data = students.map(value => {
+      value.checked = false;
+      return value;
+    });
     this.setHeaderState();
 
     if (this.eventEmitted){
@@ -87,7 +91,7 @@ export class StudentsComponent implements OnInit {
           {duration: 3000});
 
       if (currentStudents.length > students.length){
-        this.enrolledStudents.data.forEach(s => s.checked = false);
+        this._enrolledStudents.data.forEach(s => s.checked = false);
         this.numberSelected = 0;
       }
       snackBarRef.onAction().subscribe(
@@ -111,7 +115,7 @@ export class StudentsComponent implements OnInit {
   }
   onHeaderChange(event){
     this.headerState = event.checked ? 3 : 1;
-    const studentInPage = this.enrolledStudents._pageData(this.enrolledStudents.data);
+    const studentInPage = this._enrolledStudents._pageData(this._enrolledStudents.data);
     let count = 0;
     studentInPage.forEach((v) => {
       if (v.checked !== event.checked) {
@@ -131,12 +135,13 @@ export class StudentsComponent implements OnInit {
     return this.headerState >= 2;
   }
   onCheckboxChange(i: number, event) {
-    this.enrolledStudents._pageData(this.enrolledStudents.data)[i].checked = event.checked;
+    this._enrolledStudents._pageData(this._enrolledStudents.data)[i].checked = event.checked;
     this.setHeaderState();
     this.numberSelected += event.checked ? 1 : -1;
+    this.numberSelected = this.numberSelected < 0 ? 0 : this.numberSelected;
   }
   isCheckboxChecked(i: number): boolean {
-    return this.enrolledStudents._pageData(this.enrolledStudents.data)[i].checked;
+    return this._enrolledStudents._pageData(this._enrolledStudents.data)[i].checked;
   }
   deleteStudents(){
     if (this.numberSelected === 0) {
@@ -159,7 +164,7 @@ export class StudentsComponent implements OnInit {
     this.numberSelected = 0;
      */
     this.eventEmitted = true;
-    const studentsToDelete: Student[] = this.enrolledStudents.data.filter(v => v.checked);
+    const studentsToDelete: Student[] = this._enrolledStudents.data.filter(v => v.checked);
     studentsToDelete.forEach(v => v.checked = false);
     this.deleteStudentEvent.emit(studentsToDelete);
     this.formControl.setValue('');
@@ -167,7 +172,7 @@ export class StudentsComponent implements OnInit {
 
   filterStudents(str: string) {
     return this.students
-      .filter(value => !this.enrolledStudents.data.includes(value) &&
+      .filter(value => !this._enrolledStudents.data.includes(value) &&
         value.toString().toLowerCase().includes(str.toString().toLowerCase())
       );
   }
@@ -211,7 +216,7 @@ export class StudentsComponent implements OnInit {
   }
 
   private setHeaderState(){
-    const pageData: Student[] = this.enrolledStudents._pageData(this.enrolledStudents.data);
+    const pageData: Student[] = this._enrolledStudents._pageData(this._enrolledStudents.data);
     const numberOfChecked = pageData.map(v => v.checked).filter(value => value === true).length;
     if (numberOfChecked === 0){
       this.headerState = 1;

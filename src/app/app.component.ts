@@ -14,6 +14,7 @@ export class AppComponent {
   sidenav: MatSidenav;
   @ViewChild(StudentsContComponent)
   studentsComponent: StudentsContComponent;
+  badgeNumber = 0;
   toggleForMenuClick() {
     this.sidenav.toggle();
   }

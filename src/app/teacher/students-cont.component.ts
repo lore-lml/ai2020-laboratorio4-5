@@ -36,16 +36,16 @@ export class StudentsContComponent implements OnInit {
         this.enrolledStudents.push(s);
       }
     });
-    this.studentsComponent.setEnrolledStudents = this.enrolledStudents;
+    this.studentsComponent.enrolledStudents = this.enrolledStudents;
   }
 
   deleteStudents(students: Student[]) {
     this.enrolledStudents = this.enrolledStudents.filter(s => !students.includes(s));
-    this.studentsComponent.setEnrolledStudents = this.enrolledStudents;
+    this.studentsComponent.enrolledStudents = this.enrolledStudents;
   }
 
   restoreStudents(students: Student[]) {
     this.enrolledStudents = students;
-    this.studentsComponent.setEnrolledStudents = this.enrolledStudents;
+    this.studentsComponent.enrolledStudents = this.enrolledStudents;
   }
 }

@@ -31,7 +31,9 @@
     </mat-tab-group>
    -->
     <nav mat-tab-nav-bar>
-      <a mat-tab-link routerLink="teacher/course/applicazioni-internet/students">Students</a>
+      <a mat-tab-link routerLink="teacher/course/applicazioni-internet/students">
+        <span matBadgeHidden [matBadge]="badgeNumber.toString()" matBadgeOverlap="false" matBadgeColor="warn" matBadgePosition="before">&nbsp;Studenti</span>
+      </a>
       <a mat-tab-link routerLink="teacher/course/applicazioni-internet/vms">VMs</a>
     </nav>
     <router-outlet></router-outlet>
