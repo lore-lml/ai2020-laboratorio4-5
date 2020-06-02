@@ -9,6 +9,8 @@ const routes: Routes = [
   { path: 'teacher/course/applicazioni-internet/students',  component: StudentsContComponent },
   { path: 'teacher/course/applicazioni-internet/vms',       component: VmsContComponent},
   { path: 'home',                                           component: HomeComponent },
+  { path: '',                                               redirectTo: 'teacher/course/applicazioni-internet/students',
+                                                            pathMatch: 'full' },
   { path: '**',                                             component: PageNotFoundComponent}
 ];
 

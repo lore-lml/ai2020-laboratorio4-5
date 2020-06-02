@@ -24,7 +24,7 @@ export class StudentsComponent implements OnInit {
   // tslint:disable-next-line:variable-name
   _enrolledStudents: MatTableDataSource<Student>;
   filteredStudents: Observable<Student[]>;
-  checkedStudents: Set<string>;
+  checkedStudents: Set<number>;
   displayedColumns: string[] = ['select', 'id', 'firstName', 'lastName', 'group'];
   headerState: number; // 1 = unchecked, 2 = indeterminate, 3 = checked
   formControl: FormControl;
@@ -50,16 +50,6 @@ export class StudentsComponent implements OnInit {
   }
 
   constructor(private snackBar: MatSnackBar) {
-    /*this.students = [
-      new Student('s1', 'Lorenzo', 'Limoli'),
-      new Student('s2', 'Stefano', 'Loscalzo'),
-      new Student('s3', 'Angelo', 'Floridia'),
-      new Student('s4', 'Giovanni', 'Muciaccia'),
-      new Student('s5', 'Alex', 'Astone'),
-      new Student('s6', 'Francesco', 'Rossi'),
-      new Student('s7', 'Giuseppe', 'Noni'),
-      new Student('s8', 'Paola', 'Bianchi')
-    ];*/
     this._enrolledStudents = new MatTableDataSource<Student>();
 
     this.headerState = 1;
@@ -71,7 +61,7 @@ export class StudentsComponent implements OnInit {
     this.deleteStudentEvent = new EventEmitter<Student[]>();
     this.restoreEvent = new EventEmitter<Student[]>();
     this.eventEmitted = false;
-    this.checkedStudents = new Set<string>();
+    this.checkedStudents = new Set<number>();
   }
 
   @Input() set enrolledStudents(students: Student[]){

@@ -1,6 +1,7 @@
 import {AfterViewInit, Component, OnInit, ViewChild} from '@angular/core';
 import {Student} from '../student.model';
 import {StudentsComponent} from './students.component';
+import {StudentService} from '../services/student.service';
 
 @Component({
   selector: 'app-students-cont',
@@ -11,37 +12,39 @@ export class StudentsContComponent implements OnInit {
   @ViewChild(StudentsComponent)
   private studentsComponent: StudentsComponent;
   students: ReadonlyArray<Student>;
-  enrolledStudents: Student[] = [];
+  enrolledStudents: Student[];
 
-  constructor() {
-    this.students = [
-      new Student('s1', 'Lorenzo', 'Limoli'),
-      new Student('s2', 'Stefano', 'Loscalzo'),
-      new Student('s3', 'Angelo', 'Floridia'),
-      new Student('s4', 'Giovanni', 'Muciaccia'),
-      new Student('s5', 'Alex', 'Astone'),
-      new Student('s6', 'Francesco', 'Rossi'),
-      new Student('s7', 'Giuseppe', 'Noni'),
-      new Student('s8', 'Paola', 'Bianchi')
-    ];
-    this.enrolledStudents = [this.students[0], this.students[1]];
+  constructor(private studentService: StudentService) {
+    this.enrolledStudents = [];
+    studentService.query().subscribe(students => {
+      this.students = students;
+    });
+    studentService.getEnrolledStudents().subscribe(enrolled => this.enrolledStudents = enrolled);
   }
 
   ngOnInit(): void {
   }
 
   addStudents(students: Student[]) {
-    students.forEach(s => {
-      if (!this.enrolledStudents.includes(s)){
-        this.enrolledStudents.push(s);
+    const enrolled: Student[] = [];
+    students.forEach(s => this.studentService.enrollStudent(s.id).subscribe(student => {
+      enrolled.push(student);
+      if (enrolled.length === students.length){
+        this.enrolledStudents.push(...enrolled);
+        this.studentsComponent.enrolledStudents = this.enrolledStudents;
       }
-    });
-    this.studentsComponent.enrolledStudents = this.enrolledStudents;
+    }));
   }
 
   deleteStudents(students: Student[]) {
-    this.enrolledStudents = this.enrolledStudents.filter(s => !students.includes(s));
-    this.studentsComponent.enrolledStudents = this.enrolledStudents;
+    const toDelete: Student[] = [];
+    students.forEach(s => this.studentService.disenrollStudent(s.id).subscribe(student => {
+      toDelete.push(student);
+      if (toDelete.length === students.length){
+        this.enrolledStudents = this.enrolledStudents.filter(value => !toDelete.includes(value));
+        this.studentsComponent.enrolledStudents = this.enrolledStudents;
+      }
+    }));
   }
 
   restoreStudents(students: Student[]) {
