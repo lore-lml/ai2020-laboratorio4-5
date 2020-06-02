@@ -24,6 +24,7 @@ export class StudentsComponent implements OnInit {
   // tslint:disable-next-line:variable-name
   _enrolledStudents: MatTableDataSource<Student>;
   filteredStudents: Observable<Student[]>;
+  checkedStudents: Set<string>;
   displayedColumns: string[] = ['select', 'id', 'firstName', 'lastName', 'group'];
   headerState: number; // 1 = unchecked, 2 = indeterminate, 3 = checked
   formControl: FormControl;
@@ -70,12 +71,13 @@ export class StudentsComponent implements OnInit {
     this.deleteStudentEvent = new EventEmitter<Student[]>();
     this.restoreEvent = new EventEmitter<Student[]>();
     this.eventEmitted = false;
+    this.checkedStudents = new Set<string>();
   }
 
   @Input() set enrolledStudents(students: Student[]){
     const currentStudents: Array<Student> = this._enrolledStudents.data.map(value => value);
     this._enrolledStudents.data = students.map(value => {
-      value.checked = false;
+      this.checkedStudents.delete(value.id);
       return value;
     });
     this.setHeaderState();
@@ -91,12 +93,12 @@ export class StudentsComponent implements OnInit {
           {duration: 3000});
 
       if (currentStudents.length > students.length){
-        this._enrolledStudents.data.forEach(s => s.checked = false);
+        this._enrolledStudents.data.forEach(s => this.checkedStudents.delete(s.id));
         this.numberSelected = 0;
       }
       snackBarRef.onAction().subscribe(
         () => {
-          currentStudents.forEach(v => v.checked = false);
+          currentStudents.forEach(v => this.checkedStudents.delete(v.id));
           this.restoreEvent.emit(currentStudents);
           this.numberSelected = 0;
           this.headerState = 1;
@@ -118,9 +120,9 @@ export class StudentsComponent implements OnInit {
     const studentInPage = this._enrolledStudents._pageData(this._enrolledStudents.data);
     let count = 0;
     studentInPage.forEach((v) => {
-      if (v.checked !== event.checked) {
+      if (this.checkedStudents.has(v.id) !== event.checked) {
         count++;
-        v.checked = event.checked;
+        event.checked ? this.checkedStudents.add(v.id) : this.checkedStudents.delete(v.id);
       }
     });
 
@@ -135,13 +137,15 @@ export class StudentsComponent implements OnInit {
     return this.headerState >= 2;
   }
   onCheckboxChange(i: number, event) {
-    this._enrolledStudents._pageData(this._enrolledStudents.data)[i].checked = event.checked;
+    const currStudent = this._enrolledStudents._pageData(this._enrolledStudents.data)[i];
+    event.checked ? this.checkedStudents.add(currStudent.id) : this.checkedStudents.delete(currStudent.id);
     this.setHeaderState();
     this.numberSelected += event.checked ? 1 : -1;
     this.numberSelected = this.numberSelected < 0 ? 0 : this.numberSelected;
   }
   isCheckboxChecked(i: number): boolean {
-    return this._enrolledStudents._pageData(this._enrolledStudents.data)[i].checked;
+    const currStudent = this._enrolledStudents._pageData(this._enrolledStudents.data)[i];
+    return this.checkedStudents.has(currStudent.id);
   }
   deleteStudents(){
     if (this.numberSelected === 0) {
@@ -164,8 +168,8 @@ export class StudentsComponent implements OnInit {
     this.numberSelected = 0;
      */
     this.eventEmitted = true;
-    const studentsToDelete: Student[] = this._enrolledStudents.data.filter(v => v.checked);
-    studentsToDelete.forEach(v => v.checked = false);
+    const studentsToDelete: Student[] = this._enrolledStudents.data.filter(v => this.checkedStudents.has(v.id));
+    studentsToDelete.forEach(v => this.checkedStudents.delete(v.id));
     this.deleteStudentEvent.emit(studentsToDelete);
     this.formControl.setValue('');
   }
@@ -217,7 +221,7 @@ export class StudentsComponent implements OnInit {
 
   private setHeaderState(){
     const pageData: Student[] = this._enrolledStudents._pageData(this._enrolledStudents.data);
-    const numberOfChecked = pageData.map(v => v.checked).filter(value => value === true).length;
+    const numberOfChecked = pageData.filter(v => this.checkedStudents.has(v.id)).length;
     if (numberOfChecked === 0){
       this.headerState = 1;
     }else if (numberOfChecked === pageData.length){
