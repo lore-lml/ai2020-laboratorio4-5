@@ -47,14 +47,14 @@
       "firstName": "Francesco",
       "lastName": "Rossi",
       "groupId": 0,
-      "courseId": 0
+      "courseId": 1
     },
     {
       "id": "s8",
       "firstName": "Giuseppe",
       "lastName": "Noni",
       "groupId": 0,
-      "courseId": 0
+      "courseId": 1
     },
     {
       "id": "s9",

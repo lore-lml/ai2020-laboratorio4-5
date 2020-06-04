@@ -1,12 +1,11 @@
 import {Component, EventEmitter, Input, OnInit, Output, ViewChild} from '@angular/core';
 import {MatTableDataSource} from '@angular/material/table';
 import {FormControl} from '@angular/forms';
-import {MatSnackBar, MatSnackBarRef, SimpleSnackBar} from '@angular/material/snack-bar';
+import {MatSnackBar} from '@angular/material/snack-bar';
 import {MatAutocompleteSelectedEvent} from '@angular/material/autocomplete';
 import {MatPaginator} from '@angular/material/paginator';
 import {MatSort} from '@angular/material/sort';
 import {Observable} from 'rxjs';
-import {debounceTime, map, startWith} from 'rxjs/operators';
 import {Student} from '../models/student.model';
 
 @Component({
@@ -35,7 +34,6 @@ export class StudentsComponent implements OnInit {
   private deleteStudentEvent: EventEmitter<Student[]>;
   @Output()
   private restoreEvent: EventEmitter<Student[]>;
-  private eventEmitted: boolean;
 
   ngOnInit(): void {
     this._enrolledStudents.paginator = this.paginator;
@@ -52,50 +50,14 @@ export class StudentsComponent implements OnInit {
     this.addStudentEvent = new EventEmitter<Student[]>();
     this.deleteStudentEvent = new EventEmitter<Student[]>();
     this.restoreEvent = new EventEmitter<Student[]>();
-    this.eventEmitted = false;
     this.checkedStudents = new Set<string>();
   }
 
   @Input() set enrolledStudents(students: Student[]){
-    const currentStudents: Array<Student> = this._enrolledStudents.data.map(value => value);
-    this._enrolledStudents.data = students.map(value => {
-      this.checkedStudents.delete(value.id);
-      return value;
-    });
+    this._enrolledStudents.data = students.map(value => value);
+    this.checkedStudents.clear();
     this.setHeaderState();
     this.formControl.setValue('');
-    if (this.eventEmitted){
-      const snackBarRef: MatSnackBarRef<SimpleSnackBar> = currentStudents.length < students.length ?
-        this.snackBar.open('Lo studente è stato aggiunto con successo',
-          'Annulla',
-          {duration: 3000})
-        :
-        this.snackBar.open('Gli studenti sono stato rimossi con successo',
-          'Annulla',
-          {duration: 3000});
-
-      if (currentStudents.length > students.length){
-        this._enrolledStudents.data.forEach(s => this.checkedStudents.delete(s.id));
-        this.numberSelected = 0;
-      }
-      snackBarRef.onAction().subscribe(
-        () => {
-          currentStudents.forEach(v => this.checkedStudents.delete(v.id));
-          this.restoreEvent.emit(currentStudents);
-          this.numberSelected = 0;
-          this.headerState = 1;
-          this.formControl.setValue('');
-        }
-      );
-      snackBarRef.afterDismissed().subscribe((info) => {
-        if (info.dismissedByAction === true) {
-          console.log('dismiss by action');
-        }else{
-          console.log('dismiss by countdown');
-        }
-      });
-    }
-    this.eventEmitted = false;
   }
 
   get enrolledStudents(): Student[] {
@@ -143,9 +105,15 @@ export class StudentsComponent implements OnInit {
       this.snackBar.open('Non hai selezionato nessuno studente', '', {duration: 3000});
       return;
     }
-
-    this.eventEmitted = true;
     const studentsToDelete: Student[] = this._enrolledStudents.data.filter(v => this.checkedStudents.has(v.id));
+
+    this.snackBar.open('Gli studenti sono stato rimossi con successo',
+      'Annulla',
+      {duration: 2000})
+      .onAction().subscribe(() => {
+      this.addStudentEvent.emit(studentsToDelete);
+    });
+
     studentsToDelete.forEach(v => this.checkedStudents.delete(v.id));
     this.deleteStudentEvent.emit(studentsToDelete);
     this.formControl.setValue('');
@@ -161,8 +129,18 @@ export class StudentsComponent implements OnInit {
       return;
     }
 
-    this.eventEmitted = true;
-    this.addStudentEvent.emit([this.selectedStudent]);
+    /*const oldStudents = this._enrolledStudents.data.map(value => value);
+    this._enrolledStudents.data.push(this.selectedStudent);
+    this._enrolledStudents.data = this._enrolledStudents.data.map(value => value);*/
+    const selected = this.selectedStudent;
+    this.snackBar.open(`${this.selectedStudent.firstName} ${this.selectedStudent.lastName} è stato aggiunto con successo`,
+      'Annulla',
+      {duration: 2000})
+      .onAction().subscribe(() => {
+      this.deleteStudentEvent.emit([selected]);
+    });
+
+    this.addStudentEvent.emit([selected]);
     this.selectedStudent = null;
     this.formControl.setValue('');
   }
