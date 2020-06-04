@@ -13,7 +13,7 @@
     </mat-form-field>
   </div>
   <div mat-dialog-actions>
-    <button mat-raised-button color="primary" cdkFocusInitial>Login</button>
+    <button mat-raised-button color="primary" cdkFocusInitial (click)="submit()">Login</button>
     <button mat-raised-button (click)="onNoClick()">Annulla</button>
   </div>
 </div>
