@@ -15,25 +15,14 @@ export class StudentService {
   constructor(private http: HttpClient) {}
 
   create(newStudent: Student){
-    /*if (this._students.filter(s => s.id === newStudent.id).length > 0) {
-      return of<Student>(null);
-    }
-    this._students.push(newStudent);
-    return of<Student>(newStudent);*/
     const httpOptions = {
       headers: new HttpHeaders({
         'Content-Type': 'application/json',
       })
     };
-    return this.http.put<Student>(this.studentsUrl, newStudent, httpOptions);
+    return this.http.post<Student>(this.studentsUrl, newStudent, httpOptions);
   }
   update(oldStudent: Student, newStudent: Student){
-    /*const ind = this._students.findIndex(s => s.id === oldStudent.id);
-    if (ind === -1){
-      return of<Student>(oldStudent);
-    }
-    this._students[ind] = newStudent;
-    return of<Student>(newStudent);*/
     const httpOptions = {
       headers: new HttpHeaders({
         'Content-Type': 'application/json',
@@ -51,13 +40,10 @@ export class StudentService {
     return this.getStudentsObservable(this.studentsUrl);
   }
   delete(studentId: string){
-    /*const deletedStudentInd = this._students.findIndex(s => s.id === studentId);
-    let student;
-    if (deletedStudentInd !== -1){
-      student = this._students[deletedStudentInd];
-      this._students = this._students.filter(s => s.id !== studentId);
-    }
-    return of<Student[]>(student);*/
+    return this.http.delete<Student>(`${this.studentsUrl}/${studentId}`)
+      .pipe(
+        map(student => new Student(student.id, student.firstName, student.lastName, student.courseId, student.groupId))
+      );
   }
   enrollStudents(studentsToEnroll: Student[]){
     const observables: Observable<Student>[] = [];
