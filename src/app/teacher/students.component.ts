@@ -129,16 +129,14 @@ export class StudentsComponent implements OnInit {
     // Needed to not break checkbox header animation
     return this.headerState >= 2;
   }
-  onCheckboxChange(i: number, event) {
-    const currStudent = this._enrolledStudents._pageData(this._enrolledStudents.data)[i];
-    event.checked ? this.checkedStudents.add(currStudent.id) : this.checkedStudents.delete(currStudent.id);
+  onCheckboxChange(selectedStudent: Student, event) {
+    event.checked ? this.checkedStudents.add(selectedStudent.id) : this.checkedStudents.delete(selectedStudent.id);
     this.setHeaderState();
     this.numberSelected += event.checked ? 1 : -1;
     this.numberSelected = this.numberSelected < 0 ? 0 : this.numberSelected;
   }
-  isCheckboxChecked(i: number): boolean {
-    const currStudent = this._enrolledStudents._pageData(this._enrolledStudents.data)[i];
-    return this.checkedStudents.has(currStudent.id);
+  isCheckboxChecked(selectedStudent: Student): boolean {
+    return this.checkedStudents.has(selectedStudent.id);
   }
   deleteStudents(){
     if (this.numberSelected === 0) {

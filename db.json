@@ -11,14 +11,14 @@
       "id": "s2",
       "firstName": "Stefano",
       "lastName": "Loscalzo",
-      "courseId": 0,
+      "courseId": 1,
       "groupId": 0
     },
     {
       "id": "s3",
       "firstName": "Angelo",
       "lastName": "Floridia",
-      "courseId": 1,
+      "courseId": 0,
       "groupId": 0
     },
     {
@@ -32,7 +32,7 @@
       "id": "s5",
       "firstName": "Giovanni",
       "lastName": "Muciaccia",
-      "courseId": 0,
+      "courseId": 1,
       "groupId": 0
     },
     {
