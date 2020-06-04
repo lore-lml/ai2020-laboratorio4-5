@@ -2,7 +2,7 @@ import {Component, ViewChild} from '@angular/core';
 import {MatSidenav} from '@angular/material/sidenav';
 import {StudentsContComponent} from './teacher/students-cont.component';
 import {MatDialog} from '@angular/material/dialog';
-import {LoginDialogComponent} from './dialogs/login-dialog.component';
+import {LoginDialogComponent} from './auth/login-dialog.component';
 
 @Component({
   selector: 'app-root',

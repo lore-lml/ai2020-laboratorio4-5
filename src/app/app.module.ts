@@ -10,7 +10,7 @@ import {MatTableModule} from '@angular/material/table';
 import {MatCheckboxModule} from '@angular/material/checkbox';
 import {MatButtonModule} from '@angular/material/button';
 import {MatInputModule} from '@angular/material/input';
-import {ReactiveFormsModule} from '@angular/forms';
+import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {MatAutocompleteModule} from '@angular/material/autocomplete';
 import {MatPaginatorModule} from '@angular/material/paginator';
 import {MatSortModule} from '@angular/material/sort';
@@ -24,7 +24,7 @@ import {PageNotFoundComponent} from './page-not-found.component';
 import {VmsContComponent} from './teacher/vms-cont.component';
 import {HttpClientModule} from '@angular/common/http';
 import {MatDialogModule} from '@angular/material/dialog';
-import {LoginDialogComponent} from './dialogs/login-dialog.component';
+import {LoginDialogComponent} from './auth/login-dialog.component';
 import {AppComponent} from './app.component';
 
 @NgModule({
@@ -49,6 +49,7 @@ import {AppComponent} from './app.component';
     MatCheckboxModule,
     MatButtonModule,
     MatInputModule,
+    FormsModule,
     ReactiveFormsModule,
     MatAutocompleteModule,
     MatPaginatorModule,
@@ -60,6 +61,7 @@ import {AppComponent} from './app.component';
     MatDialogModule,
   ],
   providers: [],
-  bootstrap: [AppComponent]
+  bootstrap: [AppComponent],
+  entryComponents: [LoginDialogComponent]
 })
 export class AppModule { }
