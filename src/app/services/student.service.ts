@@ -1,5 +1,5 @@
 import {Injectable} from '@angular/core';
-import {Observable} from 'rxjs';
+import {forkJoin, Observable} from 'rxjs';
 import {HttpClient, HttpHeaders} from '@angular/common/http';
 import {map} from 'rxjs/operators';
 import {Student} from '../models/student.model';
@@ -59,12 +59,15 @@ export class StudentService {
     }
     return of<Student[]>(student);*/
   }
-
-  enrollStudent(studentId: string){
-    return this.updateCourseId(studentId, 1);
+  enrollStudents(studentsToEnroll: Student[]){
+    const observables: Observable<Student>[] = [];
+    studentsToEnroll.forEach(s => observables.push(this.updateCourseId(s, 1)));
+    return forkJoin(observables);
   }
-  disenrollStudent(studentId: string){
-    return this.updateCourseId(studentId, 0);
+  unrollStudents(studentsToUnroll: Student[]){
+    const observables: Observable<Student>[] = [];
+    studentsToUnroll.forEach(s => observables.push(this.updateCourseId(s, 0)));
+    return forkJoin(observables);
   }
   getEnrolledStudents(courseId: number= 1){
     return this.getStudentsObservable(`${this.studentsUrl}?courseId=${courseId}`);
@@ -88,16 +91,16 @@ export class StudentService {
       );
   }
 
-  private updateCourseId(studentId: string, id: number){
+  private updateCourseId(student: Student, id: number){
     const json = {courseId: id};
     const httpOptions = {
       headers: new HttpHeaders({
         'Content-Type': 'application/json',
       })
     };
-    return this.http.patch<Student>(`${this.studentsUrl}/${studentId}`, json, httpOptions)
+    return this.http.patch<Student>(`${this.studentsUrl}/${student.id}`, json, httpOptions)
       .pipe(
-        map(student => new Student(student.id, student.firstName, student.lastName, student.courseId, student.groupId))
+        map(response => new Student(response.id, response.firstName, response.lastName, response.courseId, response.groupId))
       );
   }
 }

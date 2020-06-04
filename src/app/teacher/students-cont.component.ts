@@ -29,7 +29,7 @@ export class StudentsContComponent implements OnInit, AfterViewInit {
   }
 
   addStudents(students: Student[]) {
-    const enrolled: Student[] = [];
+    /*const enrolled: Student[] = [];
     students.forEach(s => this.studentService.enrollStudent(s.id).subscribe(student => {
       enrolled.push(student);
       if (enrolled.length === students.length){
@@ -37,18 +37,27 @@ export class StudentsContComponent implements OnInit, AfterViewInit {
         newEnrolled.push(...enrolled);
         this.studentsComponent.enrolledStudents = newEnrolled;
       }
-    }));
+    }));*/
+    this.studentService.enrollStudents(students).subscribe(() => {
+      const enrolled = this.studentsComponent.enrolledStudents;
+      enrolled.push(...students);
+      this.studentsComponent.enrolledStudents = enrolled;
+    });
   }
 
   deleteStudents(students: Student[]) {
-    const toDelete: Student[] = [];
+    /*const toDelete: Student[] = [];
     students.forEach(s => this.studentService.disenrollStudent(s.id).subscribe(student => {
       toDelete.push(student);
       if (toDelete.length === students.length){
         this.studentsComponent.enrolledStudents = this.studentsComponent.enrolledStudents
           .filter(value => toDelete.findIndex(old => old.id === value.id) === -1);
       }
-    }));
+    }));*/
+    this.studentService.unrollStudents(students).subscribe(() => {
+      this.studentsComponent.enrolledStudents = this.studentsComponent.enrolledStudents
+        .filter(value => students.findIndex(old => old.id === value.id) === -1);
+    });
   }
 
   restoreStudents(students: Student[]) {
