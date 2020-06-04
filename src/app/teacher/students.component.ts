@@ -129,9 +129,6 @@ export class StudentsComponent implements OnInit {
       return;
     }
 
-    /*const oldStudents = this._enrolledStudents.data.map(value => value);
-    this._enrolledStudents.data.push(this.selectedStudent);
-    this._enrolledStudents.data = this._enrolledStudents.data.map(value => value);*/
     const selected = this.selectedStudent;
     this.snackBar.open(`${this.selectedStudent.firstName} ${this.selectedStudent.lastName} è stato aggiunto con successo`,
       'Annulla',

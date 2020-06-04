@@ -26,35 +26,35 @@
       "firstName": "Federica",
       "lastName": "De Luca",
       "groupId": 0,
-      "courseId": 1
+      "courseId": 0
     },
     {
       "id": "s5",
       "firstName": "Giovanni",
       "lastName": "Muciaccia",
       "groupId": 0,
-      "courseId": 1
+      "courseId": 0
     },
     {
       "id": "s6",
       "firstName": "Alex",
       "lastName": "Astone",
       "groupId": 0,
-      "courseId": 1
+      "courseId": 0
     },
     {
       "id": "s7",
       "firstName": "Francesco",
       "lastName": "Rossi",
       "groupId": 0,
-      "courseId": 1
+      "courseId": 0
     },
     {
       "id": "s8",
       "firstName": "Giuseppe",
       "lastName": "Noni",
       "groupId": 0,
-      "courseId": 1
+      "courseId": 0
     },
     {
       "id": "s9",
@@ -75,6 +75,13 @@
     {
       "id": 1,
       "name": "Calvary"
+    }
+  ],
+  "users": [
+    {
+      "email": "olivier@mail.com",
+      "password": "$2a$10$9SFIVF0tDrwRoUlZOo9Q0urEs0cnpBXu9RWGf/TxuHjFzDteQhvDW",
+      "id": 1
     }
   ]
 }

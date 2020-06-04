@@ -3,6 +3,13 @@
     <mat-icon>menu</mat-icon>
   </button>
   <a routerLink="/home">{{title}}</a>
+
+  <!-- This fills the remaining space of the current row -->
+  <span class="example-fill-remaining-space"></span>
+  <button mat-button (click)="openDialog()">
+    <mat-icon>login</mat-icon>
+    Login
+  </button>
 </mat-toolbar>
 <mat-toolbar color="">Applicazioni Internet</mat-toolbar>
 <mat-sidenav-container>
