@@ -1,74 +1,103 @@
 import {Injectable} from '@angular/core';
-import {Student} from '../student.model';
-import {of} from 'rxjs';
+import {Observable} from 'rxjs';
+import {HttpClient, HttpHeaders} from '@angular/common/http';
+import {map} from 'rxjs/operators';
+import {Student} from '../models/student.model';
 
 @Injectable({
   providedIn: 'root'
 })
 export class StudentService {
+  private studentsUrl = 'http://localhost:3000/students';
+  private coursesUrl = 'http://localhost:3000/courses';
+  private groupsUrl = 'http://localhost:3000/groups';
 
-  private _students: Student[];
-
-  constructor() {
-    this._students = [
-      new Student(1, 'Lorenzo', 'Limoli'),
-      new Student(2, 'Stefano', 'Loscalzo'),
-      new Student(3, 'Angelo', 'Floridia'),
-      new Student(4, 'Giovanni', 'Muciaccia'),
-      new Student(5, 'Alex', 'Astone'),
-      new Student(6, 'Francesco', 'Rossi'),
-      new Student(7, 'Giuseppe', 'Noni'),
-      new Student(8, 'Paola', 'Bianchi')
-    ];
-    this._students.slice(0, 2).forEach(s => s.courses = 1);
-  }
+  constructor(private http: HttpClient) {}
 
   create(newStudent: Student){
-    if (this._students.filter(s => s.id === newStudent.id).length > 0) {
+    /*if (this._students.filter(s => s.id === newStudent.id).length > 0) {
       return of<Student>(null);
     }
     this._students.push(newStudent);
-    return of<Student>(newStudent);
+    return of<Student>(newStudent);*/
+    const httpOptions = {
+      headers: new HttpHeaders({
+        'Content-Type': 'application/json',
+      })
+    };
+    return this.http.put<Student>(this.studentsUrl, newStudent, httpOptions);
   }
   update(oldStudent: Student, newStudent: Student){
-    const ind = this._students.findIndex(s => s.id === oldStudent.id);
+    /*const ind = this._students.findIndex(s => s.id === oldStudent.id);
     if (ind === -1){
       return of<Student>(oldStudent);
     }
     this._students[ind] = newStudent;
-    return of<Student>(newStudent);
+    return of<Student>(newStudent);*/
+    const httpOptions = {
+      headers: new HttpHeaders({
+        'Content-Type': 'application/json',
+      })
+    };
+    return this.http.put<Student>(`${this.studentsUrl}/${oldStudent.id}`, newStudent, httpOptions);
   }
-  find(studentId: number){
-    return of<Student>(this._students.find(value => value.id === studentId));
+  find(studentId: string){
+    return this.http.get<Student>(`${this.studentsUrl}/${studentId}`)
+      .pipe(
+        map(student => new Student(student.id, student.firstName, student.lastName, student.courseId, student.groupId))
+      );
   }
-  query(){
-    return of<Student[]>(this._students);
+  getAllStudents(): Observable<Student[]>{
+    return this.getStudentsObservable(this.studentsUrl);
   }
-  delete(studentId: number){
-    const deletedStudentInd = this._students.findIndex(s => s.id === studentId);
+  delete(studentId: string){
+    /*const deletedStudentInd = this._students.findIndex(s => s.id === studentId);
     let student;
     if (deletedStudentInd !== -1){
       student = this._students[deletedStudentInd];
       this._students = this._students.filter(s => s.id !== studentId);
     }
-    return of<Student[]>(student);
+    return of<Student[]>(student);*/
   }
 
-  enrollStudent(studentId: number, courseId: number= 1){
-    const student = this._students.find(s => s.id === studentId);
-    if (student !== undefined){
-      student.courses = courseId;
-    }
-    return of<Student>(student);
+  enrollStudent(studentId: string){
+    return this.updateCourseId(studentId, 1);
   }
-  disenrollStudent(studentId: number, courseId: number= 1){
-    const student = this._students.find(s => s.id === studentId);
-    if (student !== undefined){
-      student.courses = 0;
-    }
-    return of<Student>(student);
+  disenrollStudent(studentId: string){
+    return this.updateCourseId(studentId, 0);
   }
   getEnrolledStudents(courseId: number= 1){
-    return of<Student[]>(this._students.filter(s => s.courses === courseId));
+    return this.getStudentsObservable(`${this.studentsUrl}?courseId=${courseId}`);
+  }
+  getFilteredUnrolledStudents(value: string) {
+    return this.getStudentsObservable(`${this.studentsUrl}?courseId=0`)
+      .pipe(
+        map(students => students.filter(s => s.toString().toLowerCase().includes(value.toString().toLowerCase())))
+      );
+  }
+  private getStudentsObservable(url: string){
+    return this.http.get<Student[]>(url)
+      .pipe(
+        map(value => {
+          const students: Student[] = [];
+          value.forEach(student => students.push(
+            new Student(student.id, student.firstName, student.lastName, student.courseId, student.groupId)
+          ));
+          return students;
+        })
+      );
+  }
+
+  private updateCourseId(studentId: string, id: number){
+    const json = {courseId: id};
+    const httpOptions = {
+      headers: new HttpHeaders({
+        'Content-Type': 'application/json',
+      })
+    };
+    return this.http.patch<Student>(`${this.studentsUrl}/${studentId}`, json, httpOptions)
+      .pipe(
+        map(student => new Student(student.id, student.firstName, student.lastName, student.courseId, student.groupId))
+      );
   }
 }

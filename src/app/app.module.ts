@@ -23,6 +23,7 @@ import {AppRoutingModule} from './app-routing-module';
 import { HomeComponent } from './home.component';
 import { PageNotFoundComponent } from './page-not-found.component';
 import {VmsContComponent} from './teacher/vms-cont.component';
+import {HttpClientModule} from '@angular/common/http';
 
 @NgModule({
   declarations: [
@@ -52,6 +53,7 @@ import {VmsContComponent} from './teacher/vms-cont.component';
     MatSnackBarModule,
     MatBadgeModule,
     AppRoutingModule,
+    HttpClientModule,
   ],
   providers: [],
   bootstrap: [AppComponent]

@@ -1,28 +1,31 @@
 import {AfterViewInit, Component, OnInit, ViewChild} from '@angular/core';
-import {Student} from '../student.model';
 import {StudentsComponent} from './students.component';
 import {StudentService} from '../services/student.service';
+import {Student} from '../models/student.model';
+import {debounceTime, map, startWith, switchMap} from 'rxjs/operators';
+import {of} from 'rxjs';
 
 @Component({
   selector: 'app-students-cont',
   templateUrl: './students-cont.component.html',
   styleUrls: ['./students-cont.component.css']
 })
-export class StudentsContComponent implements OnInit {
+export class StudentsContComponent implements OnInit, AfterViewInit {
   @ViewChild(StudentsComponent)
   private studentsComponent: StudentsComponent;
-  students: ReadonlyArray<Student>;
-  enrolledStudents: Student[];
 
   constructor(private studentService: StudentService) {
-    this.enrolledStudents = [];
-    studentService.query().subscribe(students => {
-      this.students = students;
-    });
-    studentService.getEnrolledStudents().subscribe(enrolled => this.enrolledStudents = enrolled);
+    studentService.getEnrolledStudents().subscribe(enrolled => this.studentsComponent.enrolledStudents = enrolled);
   }
 
-  ngOnInit(): void {
+  ngOnInit(): void {}
+  ngAfterViewInit() {
+    this.studentsComponent.filteredStudents = this.studentsComponent.formControl.valueChanges
+      .pipe(
+        startWith(''),
+        debounceTime(300),
+        switchMap(value => this.studentService.getFilteredUnrolledStudents(value))
+      );
   }
 
   addStudents(students: Student[]) {
@@ -30,8 +33,9 @@ export class StudentsContComponent implements OnInit {
     students.forEach(s => this.studentService.enrollStudent(s.id).subscribe(student => {
       enrolled.push(student);
       if (enrolled.length === students.length){
-        this.enrolledStudents.push(...enrolled);
-        this.studentsComponent.enrolledStudents = this.enrolledStudents;
+        const newEnrolled = this.studentsComponent.enrolledStudents;
+        newEnrolled.push(...enrolled);
+        this.studentsComponent.enrolledStudents = newEnrolled;
       }
     }));
   }
@@ -41,14 +45,14 @@ export class StudentsContComponent implements OnInit {
     students.forEach(s => this.studentService.disenrollStudent(s.id).subscribe(student => {
       toDelete.push(student);
       if (toDelete.length === students.length){
-        this.enrolledStudents = this.enrolledStudents.filter(value => !toDelete.includes(value));
-        this.studentsComponent.enrolledStudents = this.enrolledStudents;
+        this.studentsComponent.enrolledStudents = this.studentsComponent.enrolledStudents
+          .filter(value => toDelete.findIndex(old => old.id === value.id) === -1);
       }
     }));
   }
 
   restoreStudents(students: Student[]) {
-    this.enrolledStudents = students;
-    this.studentsComponent.enrolledStudents = this.enrolledStudents;
+    /*this.enrolledStudents = students;
+    this.studentsComponent.enrolledStudents = this.enrolledStudents;*/
   }
 }

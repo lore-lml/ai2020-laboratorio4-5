@@ -1,0 +1,80 @@
+{
+  "students": [
+    {
+      "id": "s1",
+      "firstName": "Lorenzo",
+      "lastName": "Limoli",
+      "courseId": 1,
+      "groupId": 0
+    },
+    {
+      "id": "s2",
+      "firstName": "Stefano",
+      "lastName": "Loscalzo",
+      "courseId": 0,
+      "groupId": 0
+    },
+    {
+      "id": "s3",
+      "firstName": "Angelo",
+      "lastName": "Floridia",
+      "courseId": 1,
+      "groupId": 0
+    },
+    {
+      "id": "s4",
+      "firstName": "Federica",
+      "lastName": "De Luca",
+      "courseId": 1,
+      "groupId": 0
+    },
+    {
+      "id": "s5",
+      "firstName": "Giovanni",
+      "lastName": "Muciaccia",
+      "courseId": 0,
+      "groupId": 0
+    },
+    {
+      "id": "s6",
+      "firstName": "Alex",
+      "lastName": "Astone",
+      "courseId": 0,
+      "groupId": 0
+    },
+    {
+      "id": "s7",
+      "firstName": "Francesco",
+      "lastName": "Rossi",
+      "courseId": 0,
+      "groupId": 0
+    },
+    {
+      "id": "s8",
+      "firstName": "Giuseppe",
+      "lastName": "Noni",
+      "courseId": 0,
+      "groupId": 0
+    },
+    {
+      "id": "s9",
+      "firstName": "Paola",
+      "lastName": "Bianchi",
+      "courseId": 0,
+      "groupId": 0
+    }
+  ],
+  "courses": [
+    {
+      "id": 1,
+      "name": "Applicazioni Internet",
+      "path": "applicazioni-internet"
+    }
+  ],
+  "groups": [
+    {
+      "id": 1,
+      "name": "Calvary"
+    }
+  ]
+}
