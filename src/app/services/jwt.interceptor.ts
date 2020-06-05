@@ -9,17 +9,18 @@ import {Observable} from 'rxjs';
 import {User} from '../models/user.model';
 import {tap} from 'rxjs/operators';
 import {Router} from '@angular/router';
+import {AuthService} from '../auth/auth.service';
 
 @Injectable()
 export class JwtInterceptor implements HttpInterceptor {
-  constructor(private router: Router) {}
+  constructor(private router: Router,  private authService: AuthService) {}
   intercept(request: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
 
-    const user = User.getUser();
+    const user = this.authService.getUserDetails();
     if (user !== null){
       request = request.clone({
         setHeaders: {
-          Authorization: `Bearer ${User.getUser().getJwt()}`
+          Authorization: `Bearer ${user.getJwt()}`
         }
       });
     }
@@ -27,8 +28,8 @@ export class JwtInterceptor implements HttpInterceptor {
     return next.handle(request).pipe(
       tap((event: HttpEvent<any>) => {},
         (err: any) => {
-        User.logout();
-        this.router.navigate(['/home']);
+        this.authService.logout();
+        // this.router.navigate(['/home']);
       })
     );
   }

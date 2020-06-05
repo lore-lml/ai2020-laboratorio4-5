@@ -51,8 +51,7 @@ export class LoginDialogComponent {
     }
 
     this.authService.login(this.email.value, this.password.value)
-      .subscribe(token => {
-          User.login(token);
+      .subscribe(() => {
           this.onNoClick();
           this.router.navigate(['/teacher', 'course', 'applicazioni-internet', 'students']);
         }, () => this.loginError = true

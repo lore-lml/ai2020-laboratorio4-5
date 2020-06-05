@@ -1,5 +1,3 @@
-import {OnInit} from '@angular/core';
-
 interface JwtDetails {
   email: string;
   exp: number;
@@ -7,41 +5,10 @@ interface JwtDetails {
   sub: string;
 }
 export class User{
-  private static user: User;
-
-  private jwt: string;
+  private readonly jwt: string;
   private details: JwtDetails;
 
-  private static init(){
-    const jwt = localStorage.getItem('jwt');
-    if (jwt == null) {
-      return;
-    }
-
-    if (this.user === undefined) {
-      this.user = new User(jwt);
-    }
-  }
-  static getUser(){
-    this.init();
-    return this.user === undefined ? null : this.user;
-  }
-
-  static login(jwt: string){
-    localStorage.setItem('jwt', jwt);
-  }
-
-  static isUserLoggedIn(){
-    this.init();
-    return this.user !== undefined && !this.user.isTokenExpired();
-  }
-
-  static logout(){
-    delete this.user;
-    localStorage.removeItem('jwt');
-  }
-
-  private constructor(jwt: string) {
+   constructor(jwt: string) {
     this.jwt = jwt;
     const json = JSON.parse(atob(jwt.split('.')[1]));
     this.details = {

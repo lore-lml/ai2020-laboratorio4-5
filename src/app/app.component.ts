@@ -3,8 +3,8 @@ import {MatSidenav} from '@angular/material/sidenav';
 import {StudentsContComponent} from './teacher/students-cont.component';
 import {MatDialog} from '@angular/material/dialog';
 import {LoginDialogComponent} from './auth/login-dialog.component';
-import {User} from './models/user.model';
 import {Router} from '@angular/router';
+import {AuthService} from './auth/auth.service';
 
 @Component({
   selector: 'app-root',
@@ -20,11 +20,7 @@ export class AppComponent {
   studentsComponent: StudentsContComponent;
   badgeNumber = 0;
 
-  constructor(public dialog: MatDialog, private router: Router) {
-    if (User.isUserLoggedIn()){
-      router.navigate(['/teacher', 'course', 'applicazioni-internet', 'students']);
-    }
-  }
+  constructor(public dialog: MatDialog, private router: Router,  private authService: AuthService) {}
 
   toggleForMenuClick() {
     this.sidenav.toggle();
@@ -32,7 +28,7 @@ export class AppComponent {
 
   openDialog(): void {
     if (this.isUserLoggedIn()){
-      User.logout();
+      this.authService.logout();
       this.router.navigate(['/home']);
       return;
     }
@@ -40,14 +36,14 @@ export class AppComponent {
     const dialogRef = this.dialog.open(LoginDialogComponent, {
       width: '400px',
     });
-    console.log('open');
+    // console.log('open');
     dialogRef.afterClosed().subscribe(result => {
       // DO SOMETHING WHEN DIALOG CLOSE
     });
   }
 
   isUserLoggedIn(){
-    return User.isUserLoggedIn();
+    return this.authService.isUserLoggedIn();
   }
 
   getButtonTitle(){

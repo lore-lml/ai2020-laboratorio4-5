@@ -19,7 +19,7 @@
       "firstName": "Angelo",
       "lastName": "Floridia",
       "groupId": 0,
-      "courseId": 1
+      "courseId": 0
     },
     {
       "id": "s4",
@@ -33,7 +33,7 @@
       "firstName": "Giovanni",
       "lastName": "Muciaccia",
       "groupId": 0,
-      "courseId": 0
+      "courseId": 1
     },
     {
       "id": "s6",
