@@ -4,6 +4,7 @@ import {StudentsContComponent} from './teacher/students-cont.component';
 import {MatDialog} from '@angular/material/dialog';
 import {LoginDialogComponent} from './auth/login-dialog.component';
 import {User} from './models/user.model';
+import {Router} from '@angular/router';
 
 @Component({
   selector: 'app-root',
@@ -19,7 +20,10 @@ export class AppComponent {
   studentsComponent: StudentsContComponent;
   badgeNumber = 0;
 
-  constructor(public dialog: MatDialog) {
+  constructor(public dialog: MatDialog, private router: Router) {
+    if (User.isUserLoggedIn()){
+      router.navigate(['/teacher', 'course', 'applicazioni-internet', 'students']);
+    }
   }
 
   toggleForMenuClick() {
@@ -29,6 +33,7 @@ export class AppComponent {
   openDialog(): void {
     if (this.isUserLoggedIn()){
       User.logout();
+      this.router.navigate(['/home']);
       return;
     }
 
@@ -37,7 +42,7 @@ export class AppComponent {
     });
     console.log('open');
     dialogRef.afterClosed().subscribe(result => {
-      console.log('The dialog was closed');
+      // DO SOMETHING WHEN DIALOG CLOSE
     });
   }
 

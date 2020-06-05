@@ -3,6 +3,7 @@ import {MatDialogRef} from '@angular/material/dialog';
 import {FormControl, Validators} from '@angular/forms';
 import {AuthService} from './auth.service';
 import {User} from '../models/user.model';
+import {Router} from '@angular/router';
 
 @Component({
   selector: 'app-login-dialog',
@@ -15,7 +16,7 @@ export class LoginDialogComponent {
   password: FormControl;
   loginError: boolean;
 
-  constructor(public dialogRef: MatDialogRef<LoginDialogComponent>, private authService: AuthService) {
+  constructor(public dialogRef: MatDialogRef<LoginDialogComponent>, private authService: AuthService, private router: Router) {
     this.email = new FormControl('', [Validators.required, Validators.email, Validators.maxLength(255)]);
     this.password = new FormControl('', [Validators.required, Validators.maxLength(255)]);
   }
@@ -53,6 +54,7 @@ export class LoginDialogComponent {
       .subscribe(token => {
           User.login(token);
           this.onNoClick();
+          this.router.navigate(['/teacher', 'course', 'applicazioni-internet', 'students']);
         }, () => this.loginError = true
       );
   }

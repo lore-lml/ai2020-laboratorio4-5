@@ -22,10 +22,11 @@ import {AppRoutingModule} from './app-routing-module';
 import {HomeComponent} from './home.component';
 import {PageNotFoundComponent} from './page-not-found.component';
 import {VmsContComponent} from './teacher/vms-cont.component';
-import {HttpClientModule} from '@angular/common/http';
+import {HTTP_INTERCEPTORS, HttpClientModule} from '@angular/common/http';
 import {MatDialogModule} from '@angular/material/dialog';
 import {LoginDialogComponent} from './auth/login-dialog.component';
 import {AppComponent} from './app.component';
+import {JwtInterceptor} from './services/jwt.interceptor';
 
 @NgModule({
   declarations: [
@@ -60,7 +61,13 @@ import {AppComponent} from './app.component';
     HttpClientModule,
     MatDialogModule,
   ],
-  providers: [],
+  providers: [
+    {
+      provide: HTTP_INTERCEPTORS,
+      useClass: JwtInterceptor,
+      multi: true
+    }
+  ],
   bootstrap: [AppComponent],
   entryComponents: [LoginDialogComponent]
 })

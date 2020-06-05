@@ -75,4 +75,8 @@ export class User{
     date.setUTCHours(15);
     return date;
   }
+
+  getJwt(){
+    return this.jwt;
+  }
 }
