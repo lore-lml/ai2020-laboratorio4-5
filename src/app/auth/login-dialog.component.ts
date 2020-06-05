@@ -2,6 +2,7 @@ import {Component} from '@angular/core';
 import {MatDialogRef} from '@angular/material/dialog';
 import {FormControl, Validators} from '@angular/forms';
 import {AuthService} from './auth.service';
+import {User} from '../models/user.model';
 
 @Component({
   selector: 'app-login-dialog',
@@ -12,6 +13,7 @@ export class LoginDialogComponent {
 
   email: FormControl;
   password: FormControl;
+  loginError: boolean;
 
   constructor(public dialogRef: MatDialogRef<LoginDialogComponent>, private authService: AuthService) {
     this.email = new FormControl('', [Validators.required, Validators.email, Validators.maxLength(255)]);
@@ -49,9 +51,10 @@ export class LoginDialogComponent {
 
     this.authService.login(this.email.value, this.password.value)
       .subscribe(token => {
-        console.log(token);
-        console.log(JSON.parse(atob(token.split('.')[1])));
-        this.onNoClick();
-      }, () => console.log('error login'));
+          User.login(token);
+          this.onNoClick();
+        }, () => this.loginError = true
+      );
   }
+
 }

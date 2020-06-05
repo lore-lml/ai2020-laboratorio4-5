@@ -8,7 +8,6 @@ import {of} from 'rxjs';
 })
 export class AuthService {
   private loginUrl = 'http://localhost:3000/login';
-  private logoutUrl = 'http://localhost:3000/logout';
 
   constructor(private http: HttpClient) {}
 
@@ -25,6 +24,4 @@ export class AuthService {
         map(authResult => authResult.accessToken)
       );
   }
-
-  logout(){}
 }

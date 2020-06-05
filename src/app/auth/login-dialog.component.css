@@ -1,6 +1,5 @@
 .dialog{
-  margin: auto;
-  margin-bottom: 20px;
+  margin: auto auto 20px;
   vertical-align: center;
   text-align: center;
 }
@@ -15,4 +14,8 @@ h1{
 
 div[mat-dialog-actions]{
   text-align: center;
+}
+
+span.login-error{
+  color: red;
 }
