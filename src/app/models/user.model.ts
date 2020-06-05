@@ -5,10 +5,14 @@ interface JwtDetails {
   sub: string;
 }
 export class User{
+  private static jwtRegex = /^[A-Za-z0-9-_=]+\.[A-Za-z0-9-_=]+\.?[A-Za-z0-9-_.+/=]*$/;
   private readonly jwt: string;
   private details: JwtDetails;
 
-   constructor(jwt: string) {
+  constructor(jwt: string) {
+    if (!jwt.match(User.jwtRegex)){
+      throw new Error('Parameter doesn\'t look like JWT');
+    }
     this.jwt = jwt;
     const json = JSON.parse(atob(jwt.split('.')[1]));
     this.details = {
