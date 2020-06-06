@@ -8,9 +8,9 @@ import {Student} from '../models/student.model';
   providedIn: 'root'
 })
 export class StudentService {
-  private studentsUrl = 'http://localhost:3000/students';
-  private coursesUrl = 'http://localhost:3000/courses';
-  private groupsUrl = 'http://localhost:3000/groups';
+  private studentsUrl = 'https://localhost:4200/api/students';
+  private coursesUrl = 'https://localhost:4200/api/courses';
+  private groupsUrl = 'https://localhost:4200/api/groups';
 
   constructor(private http: HttpClient) {}
 

@@ -8,7 +8,7 @@ import {User} from '../models/user.model';
   providedIn: 'root'
 })
 export class AuthService {
-  private loginUrl = 'http://localhost:3000/login';
+  private loginUrl = 'https://localhost:4200/api/login';
   private authenticatedUser: User;
 
   constructor(private http: HttpClient) {

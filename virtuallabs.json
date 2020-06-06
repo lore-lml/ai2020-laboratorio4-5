@@ -19,14 +19,14 @@
       "firstName": "Angelo",
       "lastName": "Floridia",
       "groupId": 0,
-      "courseId": 0
+      "courseId": 1
     },
     {
       "id": "s4",
       "firstName": "Federica",
       "lastName": "De Luca",
       "groupId": 0,
-      "courseId": 0
+      "courseId": 1
     },
     {
       "id": "s5",
