@@ -48,6 +48,9 @@ export class AuthService {
       localStorage.setItem('jwt', jwt);
     }
     this.authenticatedUser = new User(jwt);
+    if (this.authenticatedUser.isTokenExpired()){
+      this.logout();
+    }
   }
 
   getUserDetails(){
@@ -56,5 +59,15 @@ export class AuthService {
 
   isUserLoggedIn(){
     return this.authenticatedUser !== undefined && !this.authenticatedUser.isTokenExpired();
+  }
+
+  setPendingRoute(route: string) {
+    localStorage.setItem('pendingRoute', route);
+  }
+
+  getAndDeletePendingRoute(): string{
+    const route = localStorage.getItem('pendingRoute');
+    localStorage.removeItem('pendingRoute');
+    return route;
   }
 }

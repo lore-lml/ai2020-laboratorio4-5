@@ -1,24 +1,38 @@
-import {Component} from '@angular/core';
+import {Component, OnDestroy, OnInit} from '@angular/core';
 import {MatDialogRef} from '@angular/material/dialog';
 import {FormControl, Validators} from '@angular/forms';
 import {AuthService} from './auth.service';
-import {User} from '../models/user.model';
 import {Router} from '@angular/router';
+import {first} from 'rxjs/operators';
+import {Subscription} from 'rxjs';
 
 @Component({
   selector: 'app-login-dialog',
   templateUrl: 'login-dialog.component.html',
   styleUrls: ['login-dialog.component.css']
 })
-export class LoginDialogComponent {
+export class LoginDialogComponent implements OnInit{
 
   email: FormControl;
   password: FormControl;
   loginError: boolean;
+  private onDialogClose: Subscription;
 
-  constructor(public dialogRef: MatDialogRef<LoginDialogComponent>, private authService: AuthService, private router: Router) {
+  constructor(private dialogRef: MatDialogRef<LoginDialogComponent>, private authService: AuthService, private router: Router) {
     this.email = new FormControl('', [Validators.required, Validators.email, Validators.maxLength(255)]);
     this.password = new FormControl('', [Validators.required, Validators.maxLength(255)]);
+  }
+
+  ngOnInit() {
+    this.onDialogClose = this.dialogRef.afterClosed()
+      .subscribe(result => {
+        let redirectRoute = this.authService.getAndDeletePendingRoute();
+        if (redirectRoute === null || redirectRoute === undefined || !this.authService.isUserLoggedIn()){
+          redirectRoute = '/home';
+        }
+        this.router.navigate([redirectRoute]);
+        this.onDialogClose.unsubscribe();
+      });
   }
 
   onNoClick(): void {
@@ -50,10 +64,9 @@ export class LoginDialogComponent {
       return;
     }
 
-    this.authService.login(this.email.value, this.password.value)
+    this.authService.login(this.email.value, this.password.value).pipe(first())
       .subscribe(() => {
           this.onNoClick();
-          this.router.navigate(['/teacher', 'course', 'applicazioni-internet', 'students']);
         }, () => this.loginError = true
       );
   }

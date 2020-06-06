@@ -14,7 +14,8 @@ export class AuthGuard implements CanActivate {
     state: RouterStateSnapshot): Observable<boolean | UrlTree> | Promise<boolean | UrlTree> | boolean | UrlTree {
 
     if (!this.authService.isUserLoggedIn()){
-      this.router.navigate(['/home']);
+      this.authService.setPendingRoute(state.url);
+      this.router.navigate(['/home'], {queryParams: {doLogin: true}});
       return false;
     }
 
