@@ -61,4 +61,11 @@ export class StudentsContComponent implements OnInit, AfterViewInit, OnDestroy {
       );
     });
   }
+
+  getSelectedStudents(){
+    if (this.studentsComponent === undefined) {
+      return 0;
+    }
+    return this.studentsComponent.checkedStudents.size;
+  }
 }

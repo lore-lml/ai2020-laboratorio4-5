@@ -11,13 +11,16 @@
     {{getButtonTitle()}}
   </button>
 </mat-toolbar>
-<mat-toolbar color="">Applicazioni Internet</mat-toolbar>
+<mat-toolbar>Applicazioni Internet</mat-toolbar>
 <mat-sidenav-container>
   <!-- ************************* SIDENAV ********************-->
   <mat-sidenav #sidenav opened mode="side" position="start">
     <div class="container">
       <mat-nav-list>
-        <mat-list-item routerLink="/teacher/course/applicazioni-internet/students">Applicazioni Internet</mat-list-item>
+        <mat-list-item routerLink="/teacher/course/applicazioni-internet/students"
+                       [ngClass]="{'active-link-sidenav': studentsTab.isActive || vmsTab.isActive}">
+          Applicazioni Internet
+        </mat-list-item>
         <mat-list-item routerLink="/teacher/course/programmazione-di-sistema/students">Programmazione di Sistema</mat-list-item>
       </mat-nav-list>
     </div>
@@ -38,12 +41,15 @@
     </mat-tab-group>
    -->
     <nav mat-tab-nav-bar>
-      <a mat-tab-link routerLink="teacher/course/applicazioni-internet/students">
-        <span matBadgeHidden [matBadge]="badgeNumber.toString()" matBadgeOverlap="false" matBadgeColor="warn" matBadgePosition="before">&nbsp;Studenti</span>
+      <a #studentsTab="routerLinkActive" mat-tab-link routerLink="teacher/course/applicazioni-internet/students" routerLinkActive="active-link">
+        <span [matBadgeHidden]="getBadgeNumber() <= 0" [matBadge]="getBadgeNumber().toString()"
+              matBadgeOverlap="false" matBadgeColor="warn" matBadgePosition="before">&nbsp;
+          Studenti
+        </span>
       </a>
-      <a mat-tab-link routerLink="teacher/course/applicazioni-internet/vms">VMs</a>
+      <a #vmsTab="routerLinkActive" mat-tab-link routerLink="teacher/course/applicazioni-internet/vms" routerLinkActive="active-link">VMs</a>
     </nav>
-    <router-outlet></router-outlet>
+    <router-outlet (activate)="onActivate($event)"></router-outlet>
   </mat-sidenav-content>
 </mat-sidenav-container>
 

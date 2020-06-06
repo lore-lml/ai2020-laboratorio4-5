@@ -18,9 +18,7 @@ export class AppComponent implements OnInit, OnDestroy{
   title = 'Virtual Labs';
   @ViewChild(MatSidenav)
   sidenav: MatSidenav;
-  @ViewChild(StudentsContComponent)
   studentsComponent: StudentsContComponent;
-  badgeNumber = 0;
   private doLogin: Subscription;
 
   constructor(public dialog: MatDialog, private router: Router,  private authService: AuthService, private activatedRoute: ActivatedRoute){}
@@ -70,6 +68,21 @@ export class AppComponent implements OnInit, OnDestroy{
       params = {doLogin: false};
     }
     return params;
+  }
+
+  getBadgeNumber(){
+    if (this.studentsComponent === undefined) {
+      return 0;
+    }
+    return this.studentsComponent.getSelectedStudents();
+  }
+
+  onActivate(componentReference: Component) {
+    if (componentReference instanceof StudentsContComponent){
+      this.studentsComponent = componentReference;
+    }else {
+      delete this.studentsComponent;
+    }
   }
 }
 

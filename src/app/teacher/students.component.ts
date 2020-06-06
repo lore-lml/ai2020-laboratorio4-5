@@ -26,7 +26,6 @@ export class StudentsComponent implements OnInit {
   headerState: number; // 1 = unchecked, 2 = indeterminate, 3 = checked
   formControl: FormControl;
   selectedStudent: Student;
-  numberSelected: number;
 
   @Output()
   private addStudentEvent: EventEmitter<Student[]>;
@@ -45,7 +44,6 @@ export class StudentsComponent implements OnInit {
     this.headerState = 1;
     this.formControl = new FormControl();
     this.selectedStudent = null;
-    this.numberSelected = 0;
 
     this.addStudentEvent = new EventEmitter<Student[]>();
     this.deleteStudentEvent = new EventEmitter<Student[]>();
@@ -80,8 +78,6 @@ export class StudentsComponent implements OnInit {
         event.checked ? this.checkedStudents.add(v.id) : this.checkedStudents.delete(v.id);
       }
     });
-
-    this.numberSelected += event.checked ? count : -count;
   }
   isIndeterminate(): boolean{
     return this.headerState === 2;
@@ -94,14 +90,12 @@ export class StudentsComponent implements OnInit {
   onCheckboxChange(selectedStudent: Student, event) {
     event.checked ? this.checkedStudents.add(selectedStudent.id) : this.checkedStudents.delete(selectedStudent.id);
     this.setHeaderState();
-    this.numberSelected += event.checked ? 1 : -1;
-    this.numberSelected = this.numberSelected < 0 ? 0 : this.numberSelected;
   }
   isCheckboxChecked(selectedStudent: Student): boolean {
     return this.checkedStudents.has(selectedStudent.id);
   }
   deleteStudents(){
-    if (this.numberSelected === 0) {
+    if (this.checkedStudents.size === 0){
       this.snackBar.open('Non hai selezionato nessuno studente', '', {duration: 3000});
       return;
     }
