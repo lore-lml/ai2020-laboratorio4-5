@@ -20,12 +20,9 @@ mat-toolbar a{
 
 .active-link{
   background: #e1e1e1;
-  border-bottom: 3px solid #3F51B5;
-  transition: .1s;
-  box-sizing: border-box;
 }
 .active-link-sidenav{
   border-left: 5px solid #3F51B5;
-  transition: .1s;
+  transition: .3s;
   box-sizing: border-box;
 }

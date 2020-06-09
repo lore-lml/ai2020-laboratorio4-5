@@ -46,13 +46,13 @@
     </mat-tab-group>
    -->
     <nav mat-tab-nav-bar>
-      <a #studentsTab="routerLinkActive" mat-tab-link routerLink="teacher/course/applicazioni-internet/students" routerLinkActive="active-link">
+      <a #studentsTab="routerLinkActive" mat-tab-link routerLink="teacher/course/applicazioni-internet/students" routerLinkActive="active-link" [active]="studentsTab.isActive">
         <span [matBadgeHidden]="getBadgeNumber() <= 0" [matBadge]="getBadgeNumber().toString()"
               matBadgeOverlap="false" matBadgeColor="warn" matBadgePosition="before">&nbsp;
           Studenti
         </span>
       </a>
-      <a #vmsTab="routerLinkActive" mat-tab-link routerLink="teacher/course/applicazioni-internet/vms" routerLinkActive="active-link">VMs</a>
+      <a #vmsTab="routerLinkActive" mat-tab-link routerLink="teacher/course/applicazioni-internet/vms" routerLinkActive="active-link" [active]="vmsTab.isActive">VMs</a>
     </nav>
     <router-outlet (activate)="onActivate($event)"></router-outlet>
   </mat-sidenav-content>
