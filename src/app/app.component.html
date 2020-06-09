@@ -1,17 +1,22 @@
 <mat-toolbar color="primary">
-  <button mat-icon-button (click)="toggleForMenuClick()">
-    <mat-icon>menu</mat-icon>
-  </button>
-  <a routerLink="/home">{{title}}</a>
+  <mat-toolbar-row class="mat-elevation-z8">
+    <button mat-icon-button (click)="toggleForMenuClick()">
+      <mat-icon>menu</mat-icon>
+    </button>
+    <a routerLink="/home">{{title}}</a>
 
-  <!-- This fills the remaining space of the current row -->
-  <span class="example-fill-remaining-space"></span>
-  <button mat-button routerLink="/home" [queryParams]="authQueryParams()">
-    <mat-icon>{{getButtonTitle().toLowerCase()}}</mat-icon>
-    {{getButtonTitle()}}
-  </button>
+    <!-- This fills the remaining space of the current row -->
+    <span class="example-fill-remaining-space"></span>
+    <button mat-button routerLink="/home" [queryParams]="authQueryParams()">
+      <mat-icon>{{getButtonTitle().toLowerCase()}}</mat-icon>
+      {{getButtonTitle()}}
+    </button>
+  </mat-toolbar-row>
+  <mat-toolbar-row>
+    <span>Applicazioni Internet</span>
+  </mat-toolbar-row>
 </mat-toolbar>
-<mat-toolbar>Applicazioni Internet</mat-toolbar>
+
 <mat-sidenav-container autosize>
   <!-- ************************* SIDENAV ********************-->
   <mat-sidenav #sidenav opened mode="side" position="start">
