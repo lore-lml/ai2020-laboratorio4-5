@@ -33,12 +33,18 @@ export class StudentsContComponent implements OnInit, AfterViewInit, OnDestroy {
     this.filterSubscription.unsubscribe();
   }
 
-  addStudents(students: Student[]) {
+  addStudents(students: Student[], snackBar: boolean = true) {
     this.studentService.enrollStudents(students).pipe(first())
       .subscribe(() => {
       const enrolled = this.studentsComponent.enrolledStudents;
       enrolled.push(...students);
       this.studentsComponent.enrolledStudents = enrolled;
+
+      if (snackBar){
+        const msg = `${students[0].firstName} ${students[0].lastName} è stato aggiunto con successo`;
+        const onAction = () => this.deleteStudents(students, false);
+        this.studentsComponent.openSnackbarWithAction(msg, onAction);
+      }
     }, () => {
       this.studentService.getEnrolledStudents().pipe(first())
         .subscribe(
@@ -48,11 +54,17 @@ export class StudentsContComponent implements OnInit, AfterViewInit, OnDestroy {
     });
   }
 
-  deleteStudents(students: Student[]) {
+  deleteStudents(students: Student[], snackBar: boolean = true) {
     this.studentService.unrollStudents(students).pipe(first())
       .subscribe(() => {
       this.studentsComponent.enrolledStudents = this.studentsComponent.enrolledStudents
         .filter(value => students.findIndex(old => old.id === value.id) === -1);
+
+      if (snackBar){
+        const msg = 'Gli studenti sono stato rimossi con successo';
+        const onAction = () => this.addStudents(students, false);
+        this.studentsComponent.openSnackbarWithAction(msg, onAction);
+      }
     }, () => {
       this.studentService.getEnrolledStudents().pipe(first())
         .subscribe(

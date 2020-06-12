@@ -101,12 +101,12 @@ export class StudentsComponent implements OnInit {
     }
     const studentsToDelete: Student[] = this._enrolledStudents.data.filter(v => this.checkedStudents.has(v.id));
 
-    this.snackBar.open('Gli studenti sono stato rimossi con successo',
+    /*this.snackBar.open('Gli studenti sono stato rimossi con successo',
       'Annulla',
       {duration: 2000})
       .onAction().subscribe(() => {
       this.addStudentEvent.emit(studentsToDelete);
-    });
+    });*/
 
     studentsToDelete.forEach(v => this.checkedStudents.delete(v.id));
     this.deleteStudentEvent.emit(studentsToDelete);
@@ -123,17 +123,14 @@ export class StudentsComponent implements OnInit {
       return;
     }
 
-    const selected = this.selectedStudent;
-    this.snackBar.open(`${this.selectedStudent.firstName} ${this.selectedStudent.lastName} è stato aggiunto con successo`,
-      'Annulla',
-      {duration: 2000})
-      .onAction().subscribe(() => {
-      this.deleteStudentEvent.emit([selected]);
-    });
-
-    this.addStudentEvent.emit([selected]);
+    this.addStudentEvent.emit([this.selectedStudent]);
     this.selectedStudent = null;
     this.formControl.setValue('');
+  }
+
+  openSnackbarWithAction(msg: string, onAction: () => void){
+    this.snackBar.open(msg, 'Annulla', {duration: 2000})
+      .onAction().subscribe(() => onAction());
   }
 
   private setHeaderState(){
