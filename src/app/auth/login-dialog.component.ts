@@ -17,10 +17,12 @@ export class LoginDialogComponent implements OnInit{
   password: FormControl;
   loginError: boolean;
   private onDialogClose: Subscription;
+  loginErrorMsg: string;
 
   constructor(private dialogRef: MatDialogRef<LoginDialogComponent>, private authService: AuthService, private router: Router) {
     this.email = new FormControl('', [Validators.required, Validators.email, Validators.maxLength(255)]);
     this.password = new FormControl('', [Validators.required, Validators.maxLength(255)]);
+    this.loginErrorMsg = '';
   }
 
   ngOnInit() {
@@ -58,6 +60,7 @@ export class LoginDialogComponent implements OnInit{
   }
 
   submit() {
+    this.loginError = false;
     if (this.getEmailErrors() !== '' || this.getPasswordErrors() !== ''){
       this.email.markAsTouched();
       this.password.markAsTouched();
@@ -65,10 +68,17 @@ export class LoginDialogComponent implements OnInit{
     }
 
     this.authService.login(this.email.value, this.password.value).pipe(first())
-      .subscribe(() => {
+      .subscribe((result) => {
+        if (!result.hasOwnProperty('status')){
           this.onNoClick();
-        }, () => this.loginError = true
-      );
+          return;
+        }
+        if (result.status >= 500){
+          this.loginErrorMsg = 'Qualcosa è andato storto, riprova più tardi';
+        }else{
+          this.loginErrorMsg = 'Email o password errati';
+        }
+        this.loginError = true;
+        });
   }
-
 }

@@ -3,6 +3,7 @@ import {HttpClient, HttpHeaders} from '@angular/common/http';
 import {catchError, tap} from 'rxjs/operators';
 import {of} from 'rxjs';
 import {User} from '../models/user.model';
+import {Router} from '@angular/router';
 
 @Injectable({
   providedIn: 'root'
@@ -11,7 +12,7 @@ export class AuthService {
   private loginUrl = 'https://localhost:4200/api/login';
   private authenticatedUser: User;
 
-  constructor(private http: HttpClient) {
+  constructor(private http: HttpClient, private router: Router) {
     this.initAuthenticatedUser();
   }
 
@@ -24,14 +25,19 @@ export class AuthService {
     };
     return this.http.post(this.loginUrl, json, httpOptions)
       .pipe(
-        catchError(() => of(null)),
-        tap(authResult => this.initAuthenticatedUser(authResult.accessToken))
+        catchError(err => of(err)),
+        tap(authResult => {
+          if (!authResult.hasOwnProperty('status')) {
+            this.initAuthenticatedUser(authResult.accessToken);
+          }
+        })
       );
   }
 
   logout(){
     delete this.authenticatedUser;
     localStorage.clear();
+    this.router.navigate(['/home']);
   }
 
   private initAuthenticatedUser(jwt: string = null){

@@ -29,7 +29,6 @@ export class JwtInterceptor implements HttpInterceptor {
       tap((event: HttpEvent<any>) => {},
         (err: any) => {
         this.authService.logout();
-        // this.router.navigate(['/home']);
       })
     );
   }

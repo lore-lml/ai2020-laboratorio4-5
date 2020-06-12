@@ -12,7 +12,7 @@
       <mat-error *ngIf="password.invalid">{{getPasswordErrors()}}</mat-error>
     </mat-form-field>
     <span class="login-error" *ngIf="loginError">
-      Email o password errati
+      {{loginErrorMsg}}
     </span>
 
   </div>
