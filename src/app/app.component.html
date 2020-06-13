@@ -26,7 +26,10 @@
                        [ngClass]="{'active-link-sidenav': studentsTab.isActive || vmsTab.isActive}">
           Applicazioni Internet
         </mat-list-item>
-        <mat-list-item routerLink="/teacher/course/programmazione-di-sistema/students">Programmazione di Sistema</mat-list-item>
+        <mat-list-item routerLink="/teacher/course/programmazione-di-sistema/students"
+        routerLinkActive="active-link-sidenav">
+          Programmazione di Sistema
+        </mat-list-item>
       </mat-nav-list>
     </div>
   </mat-sidenav>
