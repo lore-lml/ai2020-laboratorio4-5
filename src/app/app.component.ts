@@ -28,7 +28,6 @@ export class AppComponent implements OnInit, OnDestroy{
     this.doLogin = this.activatedRoute.queryParams.pipe(
       filter(params => params.doLogin)
     ).subscribe(params => {
-      console.log(params);
       if (params.doLogin === 'true' && !this.authService.isUserLoggedIn()){
         this.openDialog();
       }else if (params.doLogin === 'false' && this.isUserLoggedIn()){
