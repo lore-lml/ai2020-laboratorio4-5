@@ -27,12 +27,12 @@ export class AppComponent implements OnInit, OnDestroy{
   ngOnInit() {
     this.doLogin = this.activatedRoute.queryParams.pipe(
       filter(params => params.doLogin)
-    ).subscribe(doLogin => {
-      if (doLogin && !this.authService.isUserLoggedIn()){
+    ).subscribe(params => {
+      console.log(params);
+      if (params.doLogin === 'true' && !this.authService.isUserLoggedIn()){
         this.openDialog();
-      }else if (!doLogin && this.isUserLoggedIn()){
+      }else if (params.doLogin === 'false' && this.isUserLoggedIn()){
         this.authService.logout();
-        return;
       }else{
         this.router.navigate(['/home']);
       }
